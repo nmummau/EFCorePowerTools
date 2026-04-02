@@ -4,7 +4,7 @@
     "enable-on-configuring": false,
     "generate-mermaid-diagram": false,
     "merge-dacpacs": false,
-    "refresh-object-lists": true,
+    "refresh-object-lists": false,
     "remove-defaultsql-from-bool-properties": false,
     "soft-delete-obsolete-files": true,
     "t4-template-path": null,
@@ -37,9 +37,6 @@
   "tables": [
     {
       "name": "[dbo].[TableOne]"
-    },
-    {
-      "name": "[dbo].[TableTwo]"
     }
   ],
   "type-mappings": {

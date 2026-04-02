@@ -15,8 +15,6 @@ public partial class Issue3342Context : DbContext
 
     public virtual DbSet<TableOne> TableOnes { get; set; }
 
-    public virtual DbSet<TableTwo> TableTwos { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TableOne>(entity =>
@@ -24,13 +22,6 @@ public partial class Issue3342Context : DbContext
             entity.HasKey(e => e.TableOneId).HasName("PK_dbo_TableOne");
 
             entity.ToTable("TableOne");
-        });
-
-        modelBuilder.Entity<TableTwo>(entity =>
-        {
-            entity.HasKey(e => e.TableTwoId).HasName("PK_dbo_TableTwo");
-
-            entity.ToTable("TableTwo");
         });
 
         OnModelCreatingPartial(modelBuilder);
