@@ -549,10 +549,24 @@ namespace RevEng.Core
                 {
                     if (File.Exists(codeFile))
                     {
-                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(
-                            codeFile,
-                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                        try
+                        {
+                            if (OperatingSystem.IsWindows())
+                            {
+                                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(
+                                    codeFile,
+                                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                            }
+                            else
+                            {
+                                File.Delete(codeFile);
+                            }
+                        }
+                        catch when (File.Exists(codeFile))
+                        {
+                            File.Delete(codeFile);
+                        }
                     }
                 }
                 catch
