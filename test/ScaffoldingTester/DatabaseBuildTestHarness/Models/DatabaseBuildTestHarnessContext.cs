@@ -21,7 +21,7 @@ public partial class DatabaseBuildTestHarnessContext : DbContext
         {
             entity.HasKey(e => e.SomeTableId).HasName("PK_dbo_SomeTable");
 
-            entity.Property(e => e.ColumnWithDefault).HasComment("The location's address");
+            entity.Property(e => e.ColumnWithDefault).HasComment("The location''s address");
         });
 
         OnModelCreatingPartial(modelBuilder);
