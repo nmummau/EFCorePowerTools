@@ -10,7 +10,7 @@ namespace DatabaseBuildTestHarness.Models;
 
 [Keyless]
 [Table("MessageFault")]
-[Index("MessageFaultStatusCode", "FaultedTimestamp", Name = "IX_dbo_MessageFault_MessageFaultStatusCode_FaultedTimestamp")]
+[Index("MessageFaultStatusCode", "FaultedTimestamp", Name = "IX_dbo_MessageFault_MessageFaultStatusCode_FaultedTimestamp", IsDescending = new[] { false, true })]
 public partial class MessageFault
 {
     public int MessageFaultId { get; set; }

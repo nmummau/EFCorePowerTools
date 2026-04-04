@@ -8,3 +8,19 @@ GO
 CREATE NONCLUSTERED INDEX IX_dbo_MessageFault_MessageFaultStatusCode_FaultedTimestamp
     ON dbo.MessageFault (MessageFaultStatusCode, FaultedTimestamp DESC);
 GO
+
+CREATE TRIGGER dbo.TrMessageFaultAfterInsert ON dbo.MessageFault
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+END;
+GO
+
+CREATE TRIGGER dbo.TrMessageFaultAfterUpdate ON dbo.MessageFault
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+END;
+GO
