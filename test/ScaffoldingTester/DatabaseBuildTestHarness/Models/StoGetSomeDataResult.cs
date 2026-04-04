@@ -10,5 +10,7 @@ namespace DatabaseBuildTestHarness.Models
 {
     public partial class StoGetSomeDataResult
     {
+        [StringLength(10)]
+        public string SomeData { get; set; } = default!;
     }
 }
