@@ -42,6 +42,9 @@
   "tables": [
     {
       "name": "[dbo].[SomeTable]"
+    },
+    {
+      "name": "[dbo].[MessageFault]"
     }
   ],
   "type-mappings": {

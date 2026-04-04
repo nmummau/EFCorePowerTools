@@ -13,15 +13,22 @@ public partial class DatabaseBuildTestHarnessContext : DbContext
     {
     }
 
+    public virtual DbSet<MessageFault> MessageFaults { get; set; }
+
     public virtual DbSet<SomeTable> SomeTables { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<MessageFault>(entity =>
+        {
+            entity.Property(e => e.MessageFaultId).ValueGeneratedOnAdd();
+        });
+
         modelBuilder.Entity<SomeTable>(entity =>
         {
             entity.HasKey(e => e.SomeTableId).HasName("PK_dbo_SomeTable");
 
-            entity.Property(e => e.ColumnWithDefault).HasComment("The location''s address");
+            entity.Property(e => e.ColumnWithDefault).HasComment("The location's address");
         });
 
         OnModelCreatingPartial(modelBuilder);
