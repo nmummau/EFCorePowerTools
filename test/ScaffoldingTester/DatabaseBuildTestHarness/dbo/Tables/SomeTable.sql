@@ -6,6 +6,7 @@ GO
 CREATE TABLE dbo.SomeTable (
     SomeTableId INT            NOT NULL IDENTITY (1, 1),
     ColumnWithDefault     BIGINT         NOT NULL CONSTRAINT DF_dbo_SomeTable_ColumnWithDefault DEFAULT (0),
+    ImportToken INT SPARSE NULL,
     CONSTRAINT PK_dbo_SomeTable PRIMARY KEY CLUSTERED (SomeTableId) WITH (OPTIMIZE_FOR_SEQUENTIAL_KEY = ON)
 );
 GO
