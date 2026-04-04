@@ -15,7 +15,7 @@ public partial class SomeTable
     public int SomeTableId { get; set; }
 
     /// <summary>
-    /// The location&apos;s address
+    /// The location&apos;&apos;s address
     /// </summary>
     public long ColumnWithDefault { get; set; }
 }
