@@ -101,8 +101,38 @@ public partial class <#= EntityType.Name #>
 
         var needsNullable = Options.UseNullableReferenceTypes && property.IsNullable && !property.ClrType.IsValueType;
         var needsInitializer = Options.UseNullableReferenceTypes && !property.IsNullable && !property.ClrType.IsValueType;
+
+        var propertyDefaultValue = property.GetDefaultValue();
+        var hasInterestingDefault = propertyDefaultValue is not null && property.GetDefaultValueSql() is not null;
+
+        var initalValue = "";
+        if (hasInterestingDefault)
+        {
+            var clrType = Nullable.GetUnderlyingType(property.ClrType) ?? property.ClrType;
+
+            if (clrType == typeof(string))
+            {
+                initalValue = $" = \"{propertyDefaultValue}\";";
+            }
+            else if (clrType == typeof(bool))
+            {
+                initalValue = $" = {((bool) propertyDefaultValue ? "true" : "false")};";
+            }
+            else if (clrType == typeof(decimal))
+            {
+                initalValue = $" = {propertyDefaultValue}m;";
+            }
+            else if ((clrType == typeof(byte) || clrType == typeof(short) || clrType == typeof(int) || clrType == typeof(long)))
+            {
+                initalValue = $" = {propertyDefaultValue};";
+            }
+        }
+        if (initalValue == "" && needsInitializer)
+        {
+            initalValue = " = null!;";
+        }
 #>
-    public <#= code.Reference(property.ClrType) #><#= needsNullable ? "?" : "" #> <#= property.Name #> { get; set; }<#= needsInitializer ? " = null!;" : "" #>
+    public <#= code.Reference(property.ClrType) #><#= needsNullable ? "?" : "" #> <#= property.Name #> { get; set; }<#= initalValue #>
 <#
         firstProperty = false;
     }
