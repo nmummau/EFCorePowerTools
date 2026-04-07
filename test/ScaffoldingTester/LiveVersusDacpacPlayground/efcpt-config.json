@@ -21,7 +21,7 @@
     "use-nullable-reference-types": true,
     "use-prefix-navigation-naming": false,
     "use-typed-tvp-parameters": true,
-    "use-t4": false,
+    "use-t4": true,
     "use-t4-split": false
   },
   "file-layout": {
