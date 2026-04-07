@@ -10,5 +10,5 @@ public partial class SomeTable
 {
     public int SomeTableId { get; set; }
 
-    public long SomeBigInt { get; set; } = 0;
+    public long SomeBigInt { get; set; }
 }
