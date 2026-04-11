@@ -58,11 +58,10 @@ internal static class Program
                         .Build();
                     await host.RunAsync()
                         .ConfigureAwait(false);
+                    await PackageService.CheckForPackageUpdateAsync().ConfigureAwait(false);
                     return Environment.ExitCode;
                 },
                 async _ => await DisplayHelpAsync(parserResult).ConfigureAwait(false));
-
-        await PackageService.CheckForPackageUpdateAsync().ConfigureAwait(false);
 
         return await result.ConfigureAwait(false);
     }
