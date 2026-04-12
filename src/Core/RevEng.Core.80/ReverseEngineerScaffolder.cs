@@ -199,6 +199,11 @@ namespace RevEng.Core
                         .ToDictionary(m => m.Name, m => m.MappedType),
                 };
 
+                Console.WriteLine("Procedure model factory options:");
+                Console.WriteLine($"  Global legacy: {procedureModelFactoryOptions.UseLegacyResultSetDiscovery}");
+                Console.WriteLine($"  ModulesUsingLegacyDiscovery: {string.Join(", ", procedureModelFactoryOptions.ModulesUsingLegacyDiscovery ?? Array.Empty<string>())}");
+                Console.WriteLine($"  MappedModules: {string.Join(", ", procedureModelFactoryOptions.MappedModules?.Select(kvp => $"{kvp.Key}=>{kvp.Value}") ?? Array.Empty<string>())}");
+
                 var procedureModel = procedureModelFactory.Create(options.Dacpac ?? options.ConnectionString, procedureModelFactoryOptions);
 
                 ApplyRenamers(procedureModel.Routines, options.CustomReplacers);

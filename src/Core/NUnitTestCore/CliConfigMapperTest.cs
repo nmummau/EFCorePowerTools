@@ -1,4 +1,5 @@
 using AutoFixture.NUnit4;
+using System.Linq;
 using NUnit.Framework;
 using RevEng.Common;
 using RevEng.Common.Cli;
@@ -9,6 +10,77 @@ namespace UnitTests
     [TestFixture]
     public class CliConfigMapperTest
     {
+        [Test]
+        public void BuildObjectListPreservesStoredProcedureLegacyDiscoveryFlag()
+        {
+            var config = new CliConfig
+            {
+                StoredProcedures =
+                [
+                    new StoredProcedure
+                    {
+                        Name = "[dbo].[StoGetSomeDataLegacyDiscovery]",
+                        UseLegacyResultsetDiscovery = true,
+                    },
+                ],
+            };
+
+            var objects = CliConfigMapper.BuildObjectList(config);
+            var sproc = objects.Single(x => x.Name == "[dbo].[StoGetSomeDataLegacyDiscovery]");
+
+            Assert.That(sproc.UseLegacyResultSetDiscovery, Is.True);
+        }
+
+        [Test]
+        public void BuildObjectListPreservesStoredProcedureMappedType()
+        {
+            var config = new CliConfig
+            {
+                StoredProcedures =
+                [
+                    new StoredProcedure
+                    {
+                        Name = "[dbo].[Top 10 Customers]",
+                        MappedType = "Customer",
+                    },
+                ],
+            };
+
+            var objects = CliConfigMapper.BuildObjectList(config);
+            var sproc = objects.Single(x => x.Name == "[dbo].[Top 10 Customers]");
+
+            Assert.That(sproc.MappedType, Is.EqualTo("Customer"));
+        }
+
+        [Test]
+        public void ToCommandOptionsFlowsStoredProcedureLegacyDiscoveryIntoTables()
+        {
+            var config = new CliConfig
+            {
+                StoredProcedures =
+                [
+                    new StoredProcedure
+                    {
+                        Name = "[dbo].[StoGetSomeDataLegacyDiscovery]",
+                        UseLegacyResultsetDiscovery = true,
+                    },
+                ],
+            };
+
+            var options = CliConfigMapper.ToCommandOptions(
+                config,
+                "Server=(local);Database=Test;Trusted_Connection=True;",
+                DatabaseType.SQLServer,
+                @"C:\temp",
+                false,
+                @"C:\temp\efcpt-config.json",
+                "efcpt.renaming.json");
+
+            var sproc = options.Tables.Single(x => x.Name == "[dbo].[StoGetSomeDataLegacyDiscovery]");
+
+            Assert.That(sproc.UseLegacyResultSetDiscovery, Is.True);
+        }
+
         [Test, AutoData]
         public void CanGetOptions(CliConfig config)
         {

@@ -117,6 +117,22 @@ namespace RevEng.Common.Cli
                 Schemas = null, // not implemented, Oracle specific
             };
 
+            Console.WriteLine("CLI stored procedure config:");
+            foreach (var sproc in config.StoredProcedures ?? new List<StoredProcedure>())
+            {
+                Console.WriteLine(
+                    $"  {sproc.Name} legacy={sproc.UseLegacyResultsetDiscovery} mappedType={sproc.MappedType ?? "<null>"}");
+            }
+
+            Console.WriteLine("Mapped command options:");
+            Console.WriteLine($"  Global legacy: {options.UseLegacyResultSetDiscovery}");
+
+            foreach (var table in options.Tables?.Where(t => t.ObjectType == ObjectType.Procedure) ?? Enumerable.Empty<SerializationTableModel>())
+            {
+                Console.WriteLine(
+                    $"  Table entry {table.Name} legacy={table.UseLegacyResultSetDiscovery} mappedType={table.MappedType ?? "<null>"}");
+            }
+
             if (config.FileLayout is null)
             {
                 return options;
