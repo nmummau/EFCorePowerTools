@@ -13,6 +13,10 @@ namespace RevEng.Core
 {
     public static class ReverseEngineerRunner
     {
+        private const string CrLfLineEndingStyle = "crlf";
+        private const string LfLineEndingStyle = "lf";
+        private const string NativeLineEndingStyle = "native";
+
         public static ReverseEngineerResult GenerateFiles(ReverseEngineerCommandOptions options)
         {
             ArgumentNullException.ThrowIfNull(options);
@@ -160,6 +164,11 @@ namespace RevEng.Core
                     CleanUp(cleanUpPaths, entityTypeConfigurationPaths, outputDir);
                 }
 
+                if (ShouldNormalizeGeneratedFiles(options.FileLineEndingStyle))
+                {
+                    NormalizeGeneratedFiles(GetGeneratedFiles(filePaths, procedurePaths, functionPaths, entityTypeConfigurationPaths), options.FileLineEndingStyle);
+                }
+
                 var allfiles = filePaths.AdditionalFiles.ToList();
                 if (procedurePaths != null)
                 {
@@ -236,11 +245,19 @@ namespace RevEng.Core
 
         public static void RetryFileWrite(string path, List<string> finalLines)
         {
+            RetryFileWrite(path, finalLines, null);
+        }
+
+        public static void RetryFileWrite(string path, List<string> finalLines, string lineEndingStyle)
+        {
+            var newLine = GetNewLine(lineEndingStyle);
+            var content = finalLines.Count == 0 ? string.Empty : string.Join(newLine, finalLines) + newLine;
+
             for (int i = 1; i <= 4; ++i)
             {
                 try
                 {
-                    File.WriteAllLines(path, finalLines, Encoding.UTF8);
+                    File.WriteAllText(path, content, Encoding.UTF8);
                     break;
                 }
                 catch (IOException) when (i <= 3)
@@ -252,11 +269,18 @@ namespace RevEng.Core
 
         public static void RetryFileWrite(string path, string finalText)
         {
+            RetryFileWrite(path, finalText, null);
+        }
+
+        public static void RetryFileWrite(string path, string finalText, string lineEndingStyle)
+        {
+            var content = NormalizeLineEndings(finalText, lineEndingStyle);
+
             for (int i = 1; i <= 4; ++i)
             {
                 try
                 {
-                    File.WriteAllText(path, finalText, Encoding.UTF8);
+                    File.WriteAllText(path, content, Encoding.UTF8);
                     break;
                 }
                 catch (IOException) when (i <= 3)
@@ -295,6 +319,17 @@ namespace RevEng.Core
 
         private static void ValidateOptions(ReverseEngineerCommandOptions options, List<string> warnings)
         {
+            options.FileLineEndingStyle = NormalizeLineEndingStyle(options.FileLineEndingStyle);
+
+            if (!string.IsNullOrEmpty(options.FileLineEndingStyle)
+                && options.FileLineEndingStyle != NativeLineEndingStyle
+                && options.FileLineEndingStyle != LfLineEndingStyle
+                && options.FileLineEndingStyle != CrLfLineEndingStyle)
+            {
+                warnings.Add($"Unsupported line ending style '{options.FileLineEndingStyle}'. Supported values are '{LfLineEndingStyle}', '{CrLfLineEndingStyle}', and '{NativeLineEndingStyle}'. Falling back to '{NativeLineEndingStyle}'.");
+                options.FileLineEndingStyle = NativeLineEndingStyle;
+            }
+
             if (options.UseDatabaseNames && options.CustomReplacers?.Count > 0)
             {
                 warnings.Add($"'use-database-names' / 'UseDatabaseNames' has been set to true, but a '{Constants.RenamingFileName}' file was also found. This prevents '{Constants.RenamingFileName}' from functioning.");
@@ -347,6 +382,94 @@ namespace RevEng.Core
             }
 
             return cleanUpPaths;
+        }
+
+        private static IEnumerable<string> GetGeneratedFiles(SavedModelFiles filePaths, SavedModelFiles procedurePaths, SavedModelFiles functionPaths, IEnumerable<string> entityTypeConfigurationPaths)
+        {
+            if (!string.IsNullOrEmpty(filePaths.ContextFile))
+            {
+                yield return filePaths.ContextFile;
+            }
+
+            foreach (var file in filePaths.AdditionalFiles)
+            {
+                yield return file;
+            }
+
+            if (procedurePaths != null)
+            {
+                if (!string.IsNullOrEmpty(procedurePaths.ContextFile))
+                {
+                    yield return procedurePaths.ContextFile;
+                }
+
+                foreach (var file in procedurePaths.AdditionalFiles)
+                {
+                    yield return file;
+                }
+            }
+
+            if (functionPaths != null)
+            {
+                if (!string.IsNullOrEmpty(functionPaths.ContextFile))
+                {
+                    yield return functionPaths.ContextFile;
+                }
+
+                foreach (var file in functionPaths.AdditionalFiles)
+                {
+                    yield return file;
+                }
+            }
+
+            foreach (var file in entityTypeConfigurationPaths)
+            {
+                yield return file;
+            }
+        }
+
+        private static string GetNewLine(string lineEndingStyle)
+        {
+            return NormalizeLineEndingStyle(lineEndingStyle) switch
+            {
+                CrLfLineEndingStyle => "\r\n",
+                LfLineEndingStyle => "\n",
+                _ => Environment.NewLine,
+            };
+        }
+
+        private static string NormalizeLineEndingStyle(string lineEndingStyle)
+        {
+            return string.IsNullOrWhiteSpace(lineEndingStyle)
+                ? null
+                : lineEndingStyle.Trim().ToLowerInvariant();
+        }
+
+        private static string NormalizeLineEndings(string text, string lineEndingStyle)
+        {
+            var newLine = GetNewLine(lineEndingStyle);
+
+            return text
+                .Replace("\r\n", "\n", StringComparison.Ordinal)
+                .Replace("\r", "\n", StringComparison.Ordinal)
+                .Replace("\n", newLine, StringComparison.Ordinal);
+        }
+
+        private static bool ShouldNormalizeGeneratedFiles(string lineEndingStyle)
+        {
+            var normalizedStyle = NormalizeLineEndingStyle(lineEndingStyle);
+
+            return normalizedStyle == LfLineEndingStyle || normalizedStyle == CrLfLineEndingStyle;
+        }
+
+        private static void NormalizeGeneratedFiles(IEnumerable<string> files, string lineEndingStyle)
+        {
+            foreach (var file in files
+                .Where(File.Exists)
+                .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                RetryFileWrite(file, File.ReadAllText(file, Encoding.UTF8), lineEndingStyle);
+            }
         }
 
         private static List<string> SplitDbContext(string contextFile, bool useDbContextSplitting, string contextNamespace, bool supportNullable, string dbContextName)

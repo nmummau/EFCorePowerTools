@@ -44,6 +44,46 @@ namespace NUnitTestCore
             }
         }
 
+        [Test]
+        public void RetryFileWriteUsesLfLineEndingsWhenConfigured()
+        {
+            var codeFile = CreateTestFile("first\r\nsecond\r\n");
+
+            try
+            {
+                ReverseEngineerRunner.RetryFileWrite(codeFile, "first\r\nsecond\r\nthird\r\n", "lf");
+
+                var contents = File.ReadAllText(codeFile, Encoding.UTF8);
+
+                Assert.That(contents, Does.Contain("first\nsecond\nthird\n"));
+                Assert.That(contents, Does.Not.Contain("\r\n"));
+            }
+            finally
+            {
+                RemoveIfExists(codeFile);
+            }
+        }
+
+        [Test]
+        public void RetryFileWriteUsesCrLfLineEndingsWhenConfigured()
+        {
+            var codeFile = CreateTestFile("first\nsecond\n");
+
+            try
+            {
+                ReverseEngineerRunner.RetryFileWrite(codeFile, "first\nsecond\nthird\n", "crlf");
+
+                var contents = File.ReadAllText(codeFile, Encoding.UTF8);
+
+                Assert.That(contents, Does.Contain("first\r\nsecond\r\nthird\r\n"));
+                Assert.That(contents.Replace("\r\n", string.Empty, StringComparison.Ordinal), Does.Not.Contain("\n"));
+            }
+            finally
+            {
+                RemoveIfExists(codeFile);
+            }
+        }
+
         private static string CreateTestFile(string contents)
         {
             var directory = Path.Combine(Path.GetTempPath(), "EFCorePowerTools.Tests", Guid.NewGuid().ToString("N"));

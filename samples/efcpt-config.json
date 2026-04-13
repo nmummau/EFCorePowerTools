@@ -56,7 +56,8 @@
      "t4-template-path": null,
      "use-no-navigations-preview": false,
      "merge-dacpacs": false,
-     "refresh-object-lists": false
+     "refresh-object-lists": false,
+     "line-ending-style": "native"
   },
   "names":
   {

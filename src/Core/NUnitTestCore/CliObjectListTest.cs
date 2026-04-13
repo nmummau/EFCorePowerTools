@@ -280,6 +280,24 @@ namespace UnitTests
             }
         }
 
+        [Test]
+        public void ToCommandOptionsMapsLineEndingStyle()
+        {
+            var config = GetConfig();
+            config.CodeGeneration.LineEndingStyle = "lf";
+            config.Names.DbContextName = "TestContext";
+
+            var options = config.ToCommandOptions(
+                "fakeConnectionString",
+                DatabaseType.SQLServer,
+                cliTestDirectory,
+                isDacpac: false,
+                configPath: TestPath("efcpt-config.json"),
+                renamingPath: TestPath("efpt.renaming.json"));
+
+            Assert.That(options.FileLineEndingStyle, Is.EqualTo("lf"));
+        }
+
         private static List<TableModel> GetDefaultTables(DatabaseType databaseType)
         {
             return new List<TableModel>()

@@ -101,5 +101,10 @@ namespace RevEng.Common.Cli.Configuration
         [JsonPropertyOrder(230)]
         [JsonPropertyName("use-t4-split")]
         public bool UseT4Split { get; set; }
+
+        [JsonPropertyOrder(240)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("line-ending-style")]
+        public string LineEndingStyle { get; set; }
     }
 }
