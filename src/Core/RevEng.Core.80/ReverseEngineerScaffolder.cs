@@ -104,7 +104,8 @@ namespace RevEng.Core
 
             filePaths = Save(
                 scaffoldedModel,
-                Path.GetFullPath(Path.Combine(options.ProjectPath, outputPath ?? string.Empty)));
+                Path.GetFullPath(Path.Combine(options.ProjectPath, outputPath ?? string.Empty)),
+                options.FileLineEndingStyle);
             return filePaths;
         }
 
@@ -159,7 +160,8 @@ namespace RevEng.Core
                         contextNamespace,
                         options.UseAsyncCalls,
                         functionOptions.UseInternalAccessModifier,
-                        options.UseNullableReferences);
+                        options.UseNullableReferences,
+                        options.FileLineEndingStyle);
                 }
             }
 
@@ -230,7 +232,8 @@ namespace RevEng.Core
                         contextNamespace,
                         options.UseAsyncCalls,
                         procedureOptions.UseInternalAccessModifier,
-                        options.UseNullableReferences);
+                        options.UseNullableReferences,
+                        options.FileLineEndingStyle);
                 }
             }
 
@@ -239,7 +242,8 @@ namespace RevEng.Core
 
         private static SavedModelFiles Save(
            ScaffoldedModel scaffoldedModel,
-           string outputDir)
+           string outputDir,
+           string fileLineEndingStyle)
         {
             Directory.CreateDirectory(outputDir);
 
@@ -249,7 +253,7 @@ namespace RevEng.Core
             {
                 contextPath = Path.GetFullPath(Path.Combine(outputDir, scaffoldedModel.ContextFile!.Path));
                 Directory.CreateDirectory(Path.GetDirectoryName(contextPath)!);
-                File.WriteAllText(contextPath, scaffoldedModel.ContextFile.Code, Encoding.UTF8);
+                ReverseEngineerRunner.RetryFileWrite(contextPath, scaffoldedModel.ContextFile.Code, fileLineEndingStyle);
             }
 
             var additionalFiles = new List<string>();
@@ -262,7 +266,7 @@ namespace RevEng.Core
                     if (path != null)
                     {
                         Directory.CreateDirectory(path);
-                        File.WriteAllText(additionalFilePath, entityTypeFile.Code, Encoding.UTF8);
+                        ReverseEngineerRunner.RetryFileWrite(additionalFilePath, entityTypeFile.Code, fileLineEndingStyle);
                         additionalFiles.Add(additionalFilePath);
                     }
                 }
