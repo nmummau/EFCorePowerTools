@@ -170,5 +170,66 @@ END;";
             Assert.That(objectName.MaxLength, Is.EqualTo(128));
             Assert.That(objectName.Nullable, Is.False);
         }
+
+        [Test]
+        public void CanParseDirectLiteralTypeMatrixFromProcedureDefinition()
+        {
+            const string definition = @"
+CREATE PROCEDURE dbo.StoGetSomeDataDirectTypeMatrix
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        CAST(1 AS INT) AS IntValue,
+        CAST(1 AS BIGINT) AS BigIntValue,
+        CAST(123.45 AS DECIMAL(10,2)) AS DecimalValue,
+        CAST(123.4567 AS NUMERIC(12,4)) AS NumericValue,
+        CAST(N'Text' AS NVARCHAR(100)) AS StringValue,
+        CAST('Text' AS VARCHAR(50)) AS AnsiStringValue,
+        CAST(N'Text' AS NVARCHAR(MAX)) AS MaxStringValue,
+        CAST(N'dbo.Table' AS SYSNAME) AS SysNameValue,
+        CAST('2024-01-01' AS DATE) AS DateValue,
+        CAST('2024-01-01T12:34:56.1234567' AS DATETIME2(7)) AS DateTime2Value,
+        CAST('12:34:56.1234567' AS TIME(7)) AS TimeValue,
+        CAST('6F9619FF-8B86-D011-B42D-00C04FC964FF' AS UNIQUEIDENTIFIER) AS GuidValue,
+        CAST(1 AS BIT) AS BitValue,
+        CAST(0x1234 AS VARBINARY(2)) AS BinaryValue,
+        CAST(0x1234 AS VARBINARY(MAX)) AS MaxBinaryValue;
+END;";
+
+            var resultSets = SqlServerStoredProcedureResultSetFactory.CreateFromDefinition(definition, singleResult: true);
+
+            Assert.That(resultSets, Has.Count.EqualTo(1));
+            Assert.That(resultSets[0], Has.Count.EqualTo(15));
+
+            var decimalValue = resultSets[0].Single(c => c.Name == "DecimalValue");
+            Assert.That(decimalValue.StoreType, Is.EqualTo("decimal"));
+            Assert.That(decimalValue.Precision, Is.EqualTo(10));
+            Assert.That(decimalValue.Scale, Is.EqualTo(2));
+
+            var numericValue = resultSets[0].Single(c => c.Name == "NumericValue");
+            Assert.That(numericValue.StoreType, Is.EqualTo("decimal"));
+            Assert.That(numericValue.Precision, Is.EqualTo(12));
+            Assert.That(numericValue.Scale, Is.EqualTo(4));
+
+            var maxStringValue = resultSets[0].Single(c => c.Name == "MaxStringValue");
+            Assert.That(maxStringValue.StoreType, Is.EqualTo("nvarchar"));
+            Assert.That(maxStringValue.MaxLength, Is.EqualTo(int.MaxValue));
+
+            var dateValue = resultSets[0].Single(c => c.Name == "DateValue");
+            Assert.That(dateValue.StoreType, Is.EqualTo("date"));
+
+            var timeValue = resultSets[0].Single(c => c.Name == "TimeValue");
+            Assert.That(timeValue.StoreType, Is.EqualTo("time"));
+
+            var binaryValue = resultSets[0].Single(c => c.Name == "BinaryValue");
+            Assert.That(binaryValue.StoreType, Is.EqualTo("varbinary"));
+            Assert.That(binaryValue.MaxLength, Is.EqualTo(2));
+
+            var maxBinaryValue = resultSets[0].Single(c => c.Name == "MaxBinaryValue");
+            Assert.That(maxBinaryValue.StoreType, Is.EqualTo("varbinary"));
+            Assert.That(maxBinaryValue.MaxLength, Is.EqualTo(-1));
+        }
     }
 }
