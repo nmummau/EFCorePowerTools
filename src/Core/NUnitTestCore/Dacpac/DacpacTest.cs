@@ -416,7 +416,6 @@ GO
         }
 
         [Test]
-        [Ignore("TBD - need to investigate")]
         public void Issue2263SprocWithCte()
         {
             var factory = new SqlServerDacpacStoredProcedureModelFactory(
@@ -428,6 +427,13 @@ GO
 
             // Assert
             Assert.That(dbModel.Routines.Count(), Is.EqualTo(1));
+            Assert.That(dbModel.Errors, Is.Empty);
+
+            var procedure = dbModel.Routines.Single();
+            Assert.That(procedure.Results.Count, Is.EqualTo(1));
+            Assert.That(procedure.Results[0].Count, Is.EqualTo(1));
+            Assert.That(procedure.Results[0][0].Name, Is.EqualTo("TestColumn"));
+            Assert.That(procedure.Results[0][0].StoreType, Is.EqualTo("int"));
         }
 
         [Test]
