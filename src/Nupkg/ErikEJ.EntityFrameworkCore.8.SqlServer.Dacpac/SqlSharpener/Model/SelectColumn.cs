@@ -4,6 +4,8 @@ using Microsoft.SqlServer.TransactSql.ScriptDom;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataTypeReference = Microsoft.SqlServer.TransactSql.ScriptDom.DataTypeReference;
+using IntegerLiteral = Microsoft.SqlServer.TransactSql.ScriptDom.IntegerLiteral;
 
 namespace SqlSharpener.Model
 {
@@ -81,8 +83,12 @@ namespace SqlSharpener.Model
                 this.Name = selectScalarExpression.ColumnName != null && selectScalarExpression.ColumnName.Value != null
                     ? selectScalarExpression.ColumnName.Value
                     : "Value";
-                this.DataTypes = DataTypeHelper.Instance.GetMap(TypeFormat.SqlServerDbType, convertCall.DataType.Name.BaseIdentifier.Value);
+                var storeType = GetStoreTypeName(convertCall.DataType);
+                this.DataTypes = DataTypeHelper.Instance.GetMap(TypeFormat.SqlServerDbType, storeType);
                 this.IsNullable = true;
+                this.MaxLength = GetMaxLength(convertCall.DataType);
+                this.Precision = GetPrecision(convertCall.DataType);
+                this.Scale = GetScale(convertCall.DataType);
             }
             else if (selectScalarExpression.Expression is CastCall)
             {
@@ -90,8 +96,12 @@ namespace SqlSharpener.Model
                 this.Name = selectScalarExpression.ColumnName != null && selectScalarExpression.ColumnName.Value != null
                     ? selectScalarExpression.ColumnName.Value
                     : "Value";
-                this.DataTypes = DataTypeHelper.Instance.GetMap(TypeFormat.SqlServerDbType, castCall.DataType.Name.BaseIdentifier.Value);
+                var storeType = GetStoreTypeName(castCall.DataType);
+                this.DataTypes = DataTypeHelper.Instance.GetMap(TypeFormat.SqlServerDbType, storeType);
                 this.IsNullable = true;
+                this.MaxLength = GetMaxLength(castCall.DataType);
+                this.Precision = GetPrecision(castCall.DataType);
+                this.Scale = GetScale(castCall.DataType);
             }
             else if (selectScalarExpression.Expression is IntegerLiteral)
             {
@@ -167,6 +177,81 @@ namespace SqlSharpener.Model
                 }
             }
             return string.Join(".", list);
+        }
+
+        private static string GetStoreTypeName(DataTypeReference dataType)
+        {
+            var typeName = dataType switch
+            {
+                SqlDataTypeReference sqlDataTypeReference => sqlDataTypeReference.SqlDataTypeOption.ToString(),
+                UserDataTypeReference userDataTypeReference => userDataTypeReference.Name?.BaseIdentifier?.Value,
+                _ => null,
+            };
+
+            return typeName?.ToLowerInvariant() switch
+            {
+                "sysname" => "nvarchar",
+                var name => name,
+            };
+        }
+
+        private static int GetMaxLength(DataTypeReference dataType)
+        {
+            if (dataType is UserDataTypeReference userDataTypeReference
+                && string.Equals(userDataTypeReference.Name?.BaseIdentifier?.Value, "sysname", StringComparison.OrdinalIgnoreCase))
+            {
+                return 128;
+            }
+
+            if (dataType is not ParameterizedDataTypeReference parameterizedDataType || parameterizedDataType.Parameters.Count == 0)
+            {
+                return 0;
+            }
+
+            if (parameterizedDataType.Parameters[0].LiteralType == LiteralType.Max)
+            {
+                return -1;
+            }
+
+            if (parameterizedDataType.Parameters[0] is IntegerLiteral integerLiteral
+                && int.TryParse(integerLiteral.Value, out var value))
+            {
+                return value;
+            }
+
+            return 0;
+        }
+
+        private static short? GetPrecision(DataTypeReference dataType)
+        {
+            if (dataType is not ParameterizedDataTypeReference parameterizedDataType || parameterizedDataType.Parameters.Count == 0)
+            {
+                return null;
+            }
+
+            if (parameterizedDataType.Parameters[0] is IntegerLiteral integerLiteral
+                && short.TryParse(integerLiteral.Value, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static short? GetScale(DataTypeReference dataType)
+        {
+            if (dataType is not ParameterizedDataTypeReference parameterizedDataType || parameterizedDataType.Parameters.Count < 2)
+            {
+                return null;
+            }
+
+            if (parameterizedDataType.Parameters[1] is IntegerLiteral integerLiteral
+                && short.TryParse(integerLiteral.Value, out var value))
+            {
+                return value;
+            }
+
+            return null;
         }
     }
 }

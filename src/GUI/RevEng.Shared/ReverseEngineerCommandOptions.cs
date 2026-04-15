@@ -101,6 +101,8 @@ namespace RevEng.Common
 
         public bool UseStoredProcedureResultSetFallback { get; set; } = true;
 
+        public bool UseDacpacResultSetFallback { get; set; } = true;
+
         public bool UseAsyncCalls { get; set; }
 
         public bool UseDecimalDataAnnotation { get; set; }

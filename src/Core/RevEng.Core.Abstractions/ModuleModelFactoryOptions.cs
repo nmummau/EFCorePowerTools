@@ -20,6 +20,8 @@ namespace RevEng.Core.Abstractions
 
         public bool UseStoredProcedureResultSetFallback { get; set; } = true;
 
+        public bool UseDacpacResultSetFallback { get; set; } = true;
+
         public bool UseDateOnlyTimeOnly { get; set; }
     }
 }

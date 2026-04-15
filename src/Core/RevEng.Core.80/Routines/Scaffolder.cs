@@ -32,6 +32,11 @@ namespace RevEng.Core.Routines
             ArgumentNullException.ThrowIfNull(resultElements);
             ArgumentNullException.ThrowIfNull(options);
 
+            if (typeMapper is SqlServerClrTypeMapper)
+            {
+                SqlServerSqlTypeExtensions.UseDateOnlyTimeOnly = options.UseDateOnlyTimeOnly;
+            }
+
             var @namespace = options.ModelNamespace;
 
             Sb = new IndentedStringBuilder();

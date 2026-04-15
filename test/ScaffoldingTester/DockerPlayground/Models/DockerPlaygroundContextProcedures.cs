@@ -63,7 +63,7 @@ namespace DockerPlayground.Models
             return _;
         }
 
-        public virtual async Task<int> StoGetSomeDataDirectAsync(OutputParameter<int>? returnValue = null, CancellationToken? cancellationToken = default)
+        public virtual async Task<List<StoGetSomeDataDirectResult>?> StoGetSomeDataDirectAsync(OutputParameter<int>? returnValue = null, CancellationToken? cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
             {
@@ -76,7 +76,27 @@ namespace DockerPlayground.Models
             {
                 parameterreturnValue,
             };
-            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[StoGetSomeDataDirect]", sqlParameters, cancellationToken ?? CancellationToken.None);
+            var _ = await _context.SqlQueryAsync<StoGetSomeDataDirectResult>("EXEC @returnValue = [dbo].[StoGetSomeDataDirect]", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<StoGetSomeDataDirectTypeMatrixResult>?> StoGetSomeDataDirectTypeMatrixAsync(OutputParameter<int>? returnValue = null, CancellationToken? cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<StoGetSomeDataDirectTypeMatrixResult>("EXEC @returnValue = [dbo].[StoGetSomeDataDirectTypeMatrix]", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
