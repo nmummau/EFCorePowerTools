@@ -188,6 +188,7 @@ namespace UnitTests
         {
             var config = GetConfig();
             config.CodeGeneration.UseStoredProcedureResultSetFallback = false;
+            config.CodeGeneration.FileLineEndings = "crlf";
 
             var testPath = TestPath("test.efpcli.json");
             try
@@ -204,6 +205,7 @@ namespace UnitTests
                 Assert.That(resultConfig, Is.Not.Null);
                 Assert.That(config.Tables.Count, Is.EqualTo(resultConfig.Tables.Count));
                 Assert.That(resultConfig.CodeGeneration.UseStoredProcedureResultSetFallback, Is.False);
+                Assert.That(resultConfig.CodeGeneration.FileLineEndings, Is.EqualTo("crlf"));
 
                 for (var i = 0; i < config.Tables.Count; i++)
                 {
@@ -216,6 +218,24 @@ namespace UnitTests
             {
                 RemoveConfigFile(testPath);
             }
+        }
+
+        [Test]
+        public void ToCommandOptionsMapsFileLineEndings()
+        {
+            var config = GetConfig();
+            config.CodeGeneration.FileLineEndings = "lf";
+            config.Names.DbContextName = "TestContext";
+
+            var commandOptions = config.ToCommandOptions(
+                "Server=(localdb)\\mssqllocaldb;Database=Northwind;Trusted_Connection=True;",
+                DatabaseType.SQLServer,
+                cliTestDirectory,
+                false,
+                TestPath("test.efpcli.json"),
+                TestPath("efpt.renaming.json"));
+
+            Assert.That(commandOptions.FileLineEndingStyle, Is.EqualTo("lf"));
         }
 
         [Test]
