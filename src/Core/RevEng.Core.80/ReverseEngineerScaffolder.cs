@@ -146,6 +146,7 @@ namespace RevEng.Core
                     UseAsyncCalls = options.UseAsyncCalls,
                     UsePascalIdentifiers = !options.UseDatabaseNamesForRoutines,
                     UseDecimalDataAnnotation = options.UseDecimalDataAnnotation,
+                    UseDateOnlyTimeOnly = options.UseDateOnlyTimeOnly,
                     UseInternalAccessModifier = options.UseInternalAccessModifiersForSprocsAndFunctions,
                 };
 
@@ -188,6 +189,7 @@ namespace RevEng.Core
                     DiscoverMultipleResultSets = options.UseMultipleSprocResultSets,
                     UseLegacyResultSetDiscovery = options.UseLegacyResultSetDiscovery && !options.UseMultipleSprocResultSets,
                     UseStoredProcedureResultSetFallback = options.UseStoredProcedureResultSetFallback,
+                    UseDacpacResultSetFallback = options.UseDacpacResultSetFallback,
                     UseDateOnlyTimeOnly = options.UseDateOnlyTimeOnly,
                     FullModel = true,
                     Modules = options.Tables.Where(t => t.ObjectType == ObjectType.Procedure).Select(m => m.Name),
@@ -215,6 +217,7 @@ namespace RevEng.Core
                     UseAsyncCalls = options.UseAsyncCalls,
                     UseSchemaNamespaces = options.UseSchemaNamespaces,
                     UseDecimalDataAnnotation = options.UseDecimalDataAnnotation,
+                    UseDateOnlyTimeOnly = options.UseDateOnlyTimeOnly,
                     UsePascalIdentifiers = !options.UseDatabaseNamesForRoutines,
                     UseInternalAccessModifier = options.UseInternalAccessModifiersForSprocsAndFunctions,
                     UseTypedTvpParameters = options.UseTypedTvpParameters,

@@ -309,13 +309,13 @@ namespace IntegrationTests
         public void DacpacAndLiveDbPathsProduceMatchingSingleResultProcedureMetadata()
         {
             // This parity check stays intentionally narrow:
-            // - StoGetSomeDataDirect is excluded because the current DACPAC parser does not infer
-            //   result metadata from its direct literal SELECT shape, even though live-db metadata does.
             // - StoGetSomeDataMultipleResults is excluded because the current DACPAC path here only
             //   models the first result set, while the live-db path in this test is exercising multi-result recovery.
             var modules = new[]
             {
                 "[dbo].[StoGetSomeData]",
+                "[dbo].[StoGetSomeDataDirect]",
+                "[dbo].[StoGetSomeDataDirectTypeMatrix]",
                 "[dbo].[StoGetSomeDataLegacyDiscovery]",
                 "[dbo].[StoGetSomeDataWithParameters]",
             };
@@ -338,7 +338,7 @@ namespace IntegrationTests
             var liveRoutines = liveModel.Routines.ToDictionary(r => r.Name);
             var dacpacRoutines = dacpacModel.Routines.ToDictionary(r => r.Name);
 
-            foreach (var routineName in new[] { "StoGetSomeData", "StoGetSomeDataLegacyDiscovery", "StoGetSomeDataWithParameters" })
+            foreach (var routineName in new[] { "StoGetSomeData", "StoGetSomeDataDirect", "StoGetSomeDataDirectTypeMatrix", "StoGetSomeDataLegacyDiscovery", "StoGetSomeDataWithParameters" })
             {
                 Assert.That(dacpacRoutines.ContainsKey(routineName), Is.True, routineName);
                 Assert.That(liveRoutines.ContainsKey(routineName), Is.True, routineName);
@@ -350,10 +350,49 @@ namespace IntegrationTests
                 Assert.That(dacpacRoutine.Results[0].Select(c => c.Name), Is.EqualTo(liveRoutine.Results[0].Select(c => c.Name)), routineName);
             }
 
+            var liveTypeMatrix = liveRoutines["StoGetSomeDataDirectTypeMatrix"].Results[0].ToDictionary(c => c.Name);
+            var dacpacTypeMatrix = dacpacRoutines["StoGetSomeDataDirectTypeMatrix"].Results[0].ToDictionary(c => c.Name);
+
+            var liveNumericValue = liveTypeMatrix["NumericValue"];
+            var dacpacNumericValue = dacpacTypeMatrix["NumericValue"];
+            Assert.That(dacpacNumericValue.StoreType, Is.EqualTo(liveNumericValue.StoreType), "NumericValue store type");
+            Assert.That(dacpacNumericValue.Precision, Is.EqualTo(liveNumericValue.Precision), "NumericValue precision");
+            Assert.That(dacpacNumericValue.Scale, Is.EqualTo(liveNumericValue.Scale), "NumericValue scale");
+
+            var liveMaxStringValue = liveTypeMatrix["MaxStringValue"];
+            var dacpacMaxStringValue = dacpacTypeMatrix["MaxStringValue"];
+            Assert.That(dacpacMaxStringValue.StoreType, Is.EqualTo(liveMaxStringValue.StoreType), "MaxStringValue store type");
+            Assert.That(dacpacMaxStringValue.MaxLength, Is.EqualTo(liveMaxStringValue.MaxLength), "MaxStringValue max length");
+
+            var liveDateValue = liveTypeMatrix["DateValue"];
+            var dacpacDateValue = dacpacTypeMatrix["DateValue"];
+            Assert.That(dacpacDateValue.StoreType, Is.EqualTo(liveDateValue.StoreType), "DateValue store type");
+
+            var liveTimeValue = liveTypeMatrix["TimeValue"];
+            var dacpacTimeValue = dacpacTypeMatrix["TimeValue"];
+            Assert.That(dacpacTimeValue.StoreType, Is.EqualTo(liveTimeValue.StoreType), "TimeValue store type");
+
             var liveSearchTerm = liveRoutines["StoGetSomeDataWithParameters"].Parameters.Single(p => p.Name == "SearchTerm");
             var dacpacSearchTerm = dacpacRoutines["StoGetSomeDataWithParameters"].Parameters.Single(p => p.Name == "SearchTerm");
 
             Assert.That(dacpacSearchTerm.Length, Is.EqualTo(liveSearchTerm.Length));
+        }
+
+        [Test]
+        public void DacpacDiscoveryWithoutDacpacResultSetFallbackKeepsDirectLiteralProcedureWithoutInferredResults()
+        {
+            var dacpacFactory = new SqlServerDacpacStoredProcedureModelFactory(new SqlServerDacpacDatabaseModelFactoryOptions());
+            var dacpacModel = dacpacFactory.Create(GetDockerPlaygroundDacpacPath(), new ModuleModelFactoryOptions
+            {
+                FullModel = true,
+                UseDacpacResultSetFallback = false,
+                Modules = new[] { "[dbo].[StoGetSomeDataDirect]" },
+            });
+
+            Assert.That(dacpacModel.Errors, Is.Empty);
+
+            var routine = dacpacModel.Routines.Single(r => r.Name == "StoGetSomeDataDirect");
+            Assert.That(routine.Results, Is.Empty);
         }
 
         private RoutineModel CreateRoutineModel(
@@ -375,6 +414,7 @@ namespace IntegrationTests
                 {
                     "[dbo].[StoGetSomeData]",
                     "[dbo].[StoGetSomeDataDirect]",
+                    "[dbo].[StoGetSomeDataDirectTypeMatrix]",
                     "[dbo].[StoGetSomeDataLegacyDiscovery]",
                     "[dbo].[StoGetSomeDataMultipleResults]",
                     "[dbo].[StoGetSomeDataWithParameters]",
@@ -519,7 +559,10 @@ namespace IntegrationTests
 
             while (current != null)
             {
-                if (Directory.Exists(Path.Combine(current.FullName, ".git")))
+                var gitPath = Path.Combine(current.FullName, ".git");
+                // Git worktrees use a .git file that points at the shared metadata directory,
+                // while regular repositories use a .git directory.
+                if (Directory.Exists(gitPath) || File.Exists(gitPath))
                 {
                     return current.FullName;
                 }

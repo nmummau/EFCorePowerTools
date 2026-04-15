@@ -92,6 +92,7 @@ namespace RevEng.Common.Cli
                 UseMultipleSprocResultSets = config.CodeGeneration.DiscoverMultipleStoredProcedureResultsetsPreview,
                 UseLegacyResultSetDiscovery = config.CodeGeneration.UseAlternateStoredProcedureResultsetDiscovery,
                 UseStoredProcedureResultSetFallback = config.CodeGeneration.UseStoredProcedureResultSetFallback,
+                UseDacpacResultSetFallback = config.CodeGeneration.UseDacpacResultSetFallback,
                 PreserveCasingWithRegex = replacements.PreserveCasingWithRegex,
                 UseDateOnlyTimeOnly = typeMappings.UseDateOnlyTimeOnly,
                 UseNullableReferences = config.CodeGeneration.UseNullableReferenceTypes,

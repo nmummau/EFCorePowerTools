@@ -40,12 +40,27 @@ namespace ErikEJ.EntityFrameworkCore.SqlServer.Scaffolding
             var visitor = new ProcedureDefinitionVisitor();
             fragment.Accept(visitor);
 
-            if (visitor.TempTableTypes.Count == 0 || visitor.Selects.Count == 0)
+            if (visitor.Selects.Count == 0)
             {
                 return new List<List<ModuleResultElement>>();
             }
 
-            return CreateFromSelects(visitor.Selects.Select(select => new Select(select, visitor.TempTableTypes)), singleResult);
+            var selects = new List<Select>();
+
+            foreach (var select in visitor.Selects)
+            {
+                try
+                {
+                    selects.Add(new Select(select, visitor.TempTableTypes));
+                }
+                catch (InvalidOperationException)
+                {
+                    // Skip queries that require metadata we cannot resolve from the standalone definition,
+                    // such as regular table column references without temp-table declarations.
+                }
+            }
+
+            return CreateFromSelects(selects, singleResult);
         }
 
         /// <summary>
@@ -77,13 +92,16 @@ namespace ErikEJ.EntityFrameworkCore.SqlServer.Scaffolding
                         continue;
                     }
 
+                    var normalizedStoreType = NormalizeStoreType(storeType);
+                    var normalizedMaxLength = NormalizeMaxLength(normalizedStoreType, column.MaxLength);
+
                     list.Add(new ModuleResultElement
                     {
                         Name = column.Name,
                         Nullable = column.IsNullable,
-                        StoreType = storeType,
+                        StoreType = normalizedStoreType,
                         Ordinal = ordinal++,
-                        MaxLength = column.MaxLength,
+                        MaxLength = normalizedMaxLength,
                         Precision = column.Precision,
                         Scale = column.Scale,
                     });
@@ -101,6 +119,30 @@ namespace ErikEJ.EntityFrameworkCore.SqlServer.Scaffolding
             }
 
             return result;
+        }
+
+        private static string NormalizeStoreType(string storeType)
+        {
+            if (string.Equals(storeType, "numeric", StringComparison.OrdinalIgnoreCase))
+            {
+                return "decimal";
+            }
+
+            return storeType;
+        }
+
+        private static int NormalizeMaxLength(string storeType, int maxLength)
+        {
+            if (maxLength == -1)
+            {
+                if (string.Equals(storeType, "nvarchar", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(storeType, "varchar", StringComparison.OrdinalIgnoreCase))
+                {
+                    return int.MaxValue;
+                }
+            }
+
+            return maxLength;
         }
 
         /// <summary>

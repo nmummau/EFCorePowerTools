@@ -188,6 +188,7 @@ namespace UnitTests
         {
             var config = GetConfig();
             config.CodeGeneration.UseStoredProcedureResultSetFallback = false;
+            config.CodeGeneration.UseDacpacResultSetFallback = false;
 
             var testPath = TestPath("test.efpcli.json");
             try
@@ -204,6 +205,7 @@ namespace UnitTests
                 Assert.That(resultConfig, Is.Not.Null);
                 Assert.That(config.Tables.Count, Is.EqualTo(resultConfig.Tables.Count));
                 Assert.That(resultConfig.CodeGeneration.UseStoredProcedureResultSetFallback, Is.False);
+                Assert.That(resultConfig.CodeGeneration.UseDacpacResultSetFallback, Is.False);
 
                 for (var i = 0; i < config.Tables.Count; i++)
                 {
@@ -211,6 +213,67 @@ namespace UnitTests
                     Assert.That(resultConfig.Tables[i].Exclude, Is.EqualTo(config.Tables[i].Exclude));
                     Assert.That(resultConfig.Tables[i].ExclusionWildcard, Is.EqualTo(config.Tables[i].ExclusionWildcard));
                 }
+            }
+            finally
+            {
+                RemoveConfigFile(testPath);
+            }
+        }
+
+        [Test]
+        public void TryGetCliConfigUsesDefaultDacpacResultSetFallbackWhenPropertyIsOmitted()
+        {
+            var config = GetConfig();
+
+            var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            using var jsonDocument = JsonDocument.Parse(json);
+            var root = jsonDocument.RootElement;
+            using var stream = new MemoryStream();
+            using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
+            {
+                writer.WriteStartObject();
+
+                foreach (var property in root.EnumerateObject())
+                {
+                    if (property.NameEquals("code-generation"))
+                    {
+                        writer.WritePropertyName(property.Name);
+                        writer.WriteStartObject();
+
+                        foreach (var nestedProperty in property.Value.EnumerateObject())
+                        {
+                            if (nestedProperty.NameEquals("use-dacpac-resultset-fallback"))
+                            {
+                                continue;
+                            }
+
+                            nestedProperty.WriteTo(writer);
+                        }
+
+                        writer.WriteEndObject();
+                    }
+                    else
+                    {
+                        property.WriteTo(writer);
+                    }
+                }
+
+                writer.WriteEndObject();
+            }
+
+            var testPath = TestPath("test-no-dacpac-fallback.efpcli.json");
+            try
+            {
+                File.WriteAllText(testPath, Encoding.UTF8.GetString(stream.ToArray()), Encoding.UTF8);
+
+                var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
+                    DatabaseType.SQLServerDacpac,
+                    GetDefaultTables(DatabaseType.SQLServerDacpac), CodeGenerationMode.EFCore8,
+                    out CliConfig resultConfig,
+                    out List<string> warnings);
+
+                Assert.That(fetchedConfigSuccess, Is.True);
+                Assert.That(resultConfig.CodeGeneration.UseDacpacResultSetFallback, Is.True);
             }
             finally
             {
