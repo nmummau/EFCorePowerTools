@@ -33,7 +33,6 @@ namespace SqlSharpener.Model
         /// <param name="bodyColumnTypes">The body column types.</param>
         /// <param name="tableAliases">The table aliases.</param>
         /// <param name="outerJoinedTables">The aliases or names of tables that were outer joined. Used to determine if a non-nulllable column could still be null.</param>
-        /// <exception cref="System.InvalidOperationException">Could not find column within BodyDependencies:  + fullColName</exception>
         public SelectColumn(SelectScalarExpression selectScalarExpression, IDictionary<string, DataType> bodyColumnTypes, IDictionary<string, string> tableAliases, IEnumerable<string> outerJoinedTables)
         {
             if (selectScalarExpression.Expression is ColumnReferenceExpression)
@@ -46,8 +45,16 @@ namespace SqlSharpener.Model
                     ? selectScalarExpression.ColumnName.Value
                     : identifiers.Last().Value;
 
-                var key = bodyColumnTypes.Keys.FirstOrDefault(x => x.EndsWith(fullColName, StringComparison.InvariantCultureIgnoreCase));
-                if (key == null) throw new InvalidOperationException("Could not find column within BodyDependencies: " + fullColName);
+                var key = bodyColumnTypes.Keys
+                    .Where(x => x.EndsWith(fullColName, StringComparison.InvariantCultureIgnoreCase))
+                    .OrderBy(x => x.Length)
+                    .FirstOrDefault();
+                if (key == null)
+                {
+                    this.DataTypes = DataTypeHelper.Instance.GetMap(SqlSharpener.DataTypes.sql_variant);
+                    this.IsNullable = true;
+                    return;
+                }
 
                 
                 bool outerJoined = false;
