@@ -2,10 +2,7 @@ using System;
 
 namespace MigrationsTest;
 
-class Program
+internal static class Program
 {
-    static void Main(string[] args)
-    {
-        Console.WriteLine("Hello World!");
-    }
+    private static void Main() => Console.WriteLine("Hello World!");
 }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleApp;
 
-class Program
+internal static class Program
 {
-    static void Main(string[] args)
+    private static void Main()
     {
         var optionsBuilder = new DbContextOptionsBuilder<ChinookContext>();
 

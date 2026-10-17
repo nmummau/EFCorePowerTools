@@ -20,8 +20,5 @@ public partial class NorthwindContext
     private IQueryable<StringSplitResult> Split(string source, string separator)
         => FromExpression(() => Split(source, separator));
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<StringSplitResult>().HasNoKey();
-    }
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder) => modelBuilder.Entity<StringSplitResult>().HasNoKey();
 }

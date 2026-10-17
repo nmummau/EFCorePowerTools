@@ -158,6 +158,8 @@ csharp_style_var_elsewhere = true                                               
 # Namespace declaration preferences
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0160-ide0161?view=vs-2022
 csharp_style_namespace_declarations = file_scoped                               # IDE0160 and IDE0161
+# Keep explicit Program classes; top-level statements conflict with insert_final_newline = false.
+csharp_style_prefer_top_level_statements = false                               # IDE0210 and IDE0211
 
 # Expression-bodied members
 # https://docs.microsoft.com/visualstudio/ide/editorconfig-language-conventions#expression-bodied-members
