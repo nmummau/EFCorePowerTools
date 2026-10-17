@@ -30,227 +30,226 @@ using System.Linq;
 using Microsoft.SqlServer.Dac.Model;
 using Index = Microsoft.SqlServer.Dac.Model.Index;
 
-namespace Microsoft.SqlServer.Dac.Extensions.Prototype
+namespace Microsoft.SqlServer.Dac.Extensions.Prototype;
+
+public partial class TSqlTable
 {
-    public partial class TSqlTable
+    public IEnumerable<ISqlIndex> Indexes
     {
-        public IEnumerable<ISqlIndex> Indexes
+        get
         {
-            get
+            foreach (var element in Element.GetReferencing(Index.IndexedObject))
             {
-                foreach (var element in Element.GetReferencing(Index.IndexedObject))
-                {
-                    yield return (ISqlIndex)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlForeignKeyConstraint> ForeignKeyConstraints
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(ForeignKeyConstraint.Host))
-                {
-                    yield return (TSqlForeignKeyConstraint)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlPrimaryKeyConstraint> PrimaryKeyConstraints
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(PrimaryKeyConstraint.Host))
-                {
-                    yield return (TSqlPrimaryKeyConstraint)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlDefaultConstraint> DefaultConstraints
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(DefaultConstraint.Host))
-                {
-                    yield return (TSqlDefaultConstraint)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlCheckConstraint> CheckConstraints
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(CheckConstraint.Host))
-                {
-                    yield return (TSqlCheckConstraint)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlUniqueConstraint> UniqueConstraints
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(UniqueConstraint.Host))
-                {
-                    yield return (TSqlUniqueConstraint)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns all constraints for the table
-        /// </summary>
-        public IEnumerable<ISqlModelElement> AllConstraints
-        {
-            get
-            {
-                foreach (var constraint in ForeignKeyConstraints)
-                {
-                    yield return constraint;
-                }
-                foreach (var constraint in PrimaryKeyConstraints)
-                {
-                    yield return constraint;
-                }
-                foreach (var constraint in UniqueConstraints)
-                {
-                    yield return constraint;
-                }
-                foreach (var constraint in CheckConstraints)
-                {
-                    yield return constraint;
-                }
-                foreach (var constraint in DefaultConstraints)
-                {
-                    yield return constraint;
-                }
-            }
-        }
-        public IEnumerable<TSqlDmlTrigger> Triggers
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
-                {
-                    yield return (TSqlDmlTrigger)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-    }
-    public partial class TSqlFileTable
-    {
-        public IEnumerable<ISqlIndex> Indexes
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(Index.IndexedObject))
-                {
-                    yield return (ISqlIndex)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-        }
-
-        public IEnumerable<TSqlDmlTrigger> Triggers
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
-                {
-                    yield return (TSqlDmlTrigger)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-
-        }
-    }
-
-    public partial class TSqlTableValuedFunction
-    {
-        public IEnumerable<ISqlIndex> Indexes
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(Index.IndexedObject))
-                {
-                    yield return (ISqlIndex)TSqlModelElement.AdaptInstance(element);
-                }
+                yield return (ISqlIndex)AdaptInstance(element);
             }
         }
     }
 
-    public partial class TSqlView
+    public IEnumerable<TSqlForeignKeyConstraint> ForeignKeyConstraints
     {
-        public IEnumerable<ISqlIndex> Indexes
+        get
         {
-            get
+            foreach (var element in Element.GetReferencing(ForeignKeyConstraint.Host))
             {
-                foreach (var element in Element.GetReferencing(Index.IndexedObject))
-                {
-                    yield return (ISqlIndex)TSqlModelElement.AdaptInstance(element);
-                }
+                yield return (TSqlForeignKeyConstraint)AdaptInstance(element);
             }
-        }
-
-        public IEnumerable<TSqlDmlTrigger> Triggers
-        {
-            get
-            {
-                foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
-                {
-                    yield return (TSqlDmlTrigger)TSqlModelElement.AdaptInstance(element);
-                }
-            }
-
         }
     }
 
-    public partial class TSqlTableType
+    public IEnumerable<TSqlPrimaryKeyConstraint> PrimaryKeyConstraints
     {
-        public IEnumerable<TSqlTableTypePrimaryKeyConstraint> PrimaryKeyConstraints
+        get
         {
-            get
+            foreach (var element in Element.GetReferencing(PrimaryKeyConstraint.Host))
             {
+                yield return (TSqlPrimaryKeyConstraint)AdaptInstance(element);
+            }
+        }
+    }
 
-                foreach (var element in Constraints.OfType<TSqlTableTypePrimaryKeyConstraint>())
-                {
-                    yield return element;
-                }
+    public IEnumerable<TSqlDefaultConstraint> DefaultConstraints
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(DefaultConstraint.Host))
+            {
+                yield return (TSqlDefaultConstraint)AdaptInstance(element);
+            }
+        }
+    }
+
+    public IEnumerable<TSqlCheckConstraint> CheckConstraints
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(CheckConstraint.Host))
+            {
+                yield return (TSqlCheckConstraint)AdaptInstance(element);
+            }
+        }
+    }
+
+    public IEnumerable<TSqlUniqueConstraint> UniqueConstraints
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(UniqueConstraint.Host))
+            {
+                yield return (TSqlUniqueConstraint)AdaptInstance(element);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns all constraints for the table
+    /// </summary>
+    public IEnumerable<ISqlModelElement> AllConstraints
+    {
+        get
+        {
+            foreach (var constraint in ForeignKeyConstraints)
+            {
+                yield return constraint;
+            }
+            foreach (var constraint in PrimaryKeyConstraints)
+            {
+                yield return constraint;
+            }
+            foreach (var constraint in UniqueConstraints)
+            {
+                yield return constraint;
+            }
+            foreach (var constraint in CheckConstraints)
+            {
+                yield return constraint;
+            }
+            foreach (var constraint in DefaultConstraints)
+            {
+                yield return constraint;
+            }
+        }
+    }
+    public IEnumerable<TSqlDmlTrigger> Triggers
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
+            {
+                yield return (TSqlDmlTrigger)AdaptInstance(element);
+            }
+        }
+    }
+
+}
+public partial class TSqlFileTable
+{
+    public IEnumerable<ISqlIndex> Indexes
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(Index.IndexedObject))
+            {
+                yield return (ISqlIndex)AdaptInstance(element);
+            }
+        }
+    }
+
+    public IEnumerable<TSqlDmlTrigger> Triggers
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
+            {
+                yield return (TSqlDmlTrigger)AdaptInstance(element);
             }
         }
 
-        public IEnumerable<TSqlTableTypeDefaultConstraint> DefaultConstraints
+    }
+}
+
+public partial class TSqlTableValuedFunction
+{
+    public IEnumerable<ISqlIndex> Indexes
+    {
+        get
         {
-            get
+            foreach (var element in Element.GetReferencing(Index.IndexedObject))
             {
-                foreach (var element in Constraints.OfType<TSqlTableTypeDefaultConstraint>())
-                {
-                    yield return element;
-                }
+                yield return (ISqlIndex)AdaptInstance(element);
+            }
+        }
+    }
+}
+
+public partial class TSqlView
+{
+    public IEnumerable<ISqlIndex> Indexes
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(Index.IndexedObject))
+            {
+                yield return (ISqlIndex)AdaptInstance(element);
+            }
+        }
+    }
+
+    public IEnumerable<TSqlDmlTrigger> Triggers
+    {
+        get
+        {
+            foreach (var element in Element.GetReferencing(DmlTrigger.TriggerObject))
+            {
+                yield return (TSqlDmlTrigger)AdaptInstance(element);
             }
         }
 
-        public IEnumerable<TSqlTableTypeCheckConstraint> CheckConstraints
+    }
+}
+
+public partial class TSqlTableType
+{
+    public IEnumerable<TSqlTableTypePrimaryKeyConstraint> PrimaryKeyConstraints
+    {
+        get
         {
-            get
+
+            foreach (var element in Constraints.OfType<TSqlTableTypePrimaryKeyConstraint>())
             {
-                foreach (var element in Constraints.OfType<TSqlTableTypeCheckConstraint>())
-                {
-                    yield return element;
-                }
+                yield return element;
             }
         }
+    }
 
-        public IEnumerable<TSqlTableTypeUniqueConstraint> UniqueConstraints
+    public IEnumerable<TSqlTableTypeDefaultConstraint> DefaultConstraints
+    {
+        get
         {
-            get
+            foreach (var element in Constraints.OfType<TSqlTableTypeDefaultConstraint>())
             {
-                foreach (var element in this.Constraints.OfType<TSqlTableTypeUniqueConstraint>())
-                {
-                    yield return element;
-                }
+                yield return element;
+            }
+        }
+    }
+
+    public IEnumerable<TSqlTableTypeCheckConstraint> CheckConstraints
+    {
+        get
+        {
+            foreach (var element in Constraints.OfType<TSqlTableTypeCheckConstraint>())
+            {
+                yield return element;
+            }
+        }
+    }
+
+    public IEnumerable<TSqlTableTypeUniqueConstraint> UniqueConstraints
+    {
+        get
+        {
+            foreach (var element in Constraints.OfType<TSqlTableTypeUniqueConstraint>())
+            {
+                yield return element;
             }
         }
     }

@@ -24,47 +24,49 @@
 //    SOFTWARE.
 //</copyright>
 //------------------------------------------------------------------------------
-namespace Microsoft.SqlServer.Dac.Extensions.Prototype
+using System.Collections.Generic;
+using Microsoft.SqlServer.Dac.Model;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
+
+namespace Microsoft.SqlServer.Dac.Extensions.Prototype;
+
+#pragma warning disable CA1716 // Preserve upstream public parameter names for callers using named arguments.
+public interface ISqlModelElement
 {
-    using System.Collections.Generic;
-    using Microsoft.SqlServer.Dac.Model;
-    using Microsoft.SqlServer.TransactSql.ScriptDom;
-    public interface ISqlModelElement
-    {
-        ObjectIdentifier Name { get; }
-        TSqlObject Element { get; }
-        TSqlScript GetAst();
-        IEnumerable<TSqlObject> GetChildren();
-        IEnumerable<TSqlObject> GetChildren(DacQueryScopes queryScopes);
-        object GetMetadata(ModelMetadataClass metadata);
-        T GetMetadata<T>(ModelMetadataClass metadata);
-        TSqlObject GetParent();
-        TSqlObject GetParent(DacQueryScopes queryScopes);
-        object GetProperty(ModelPropertyClass property);
-        T GetProperty<T>(ModelPropertyClass property);
-        IEnumerable<TSqlObject> GetReferenced();
-        IEnumerable<TSqlObject> GetReferenced(DacQueryScopes queryScopes);
-        IEnumerable<TSqlObject> GetReferenced(ModelRelationshipClass relationshipType);
-        IEnumerable<TSqlObject> GetReferenced(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances();
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(DacExternalQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(DacQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType);
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType, DacExternalQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
-        IEnumerable<TSqlObject> GetReferencing();
-        IEnumerable<TSqlObject> GetReferencing(DacQueryScopes queryScopes);
-        IEnumerable<TSqlObject> GetReferencing(ModelRelationshipClass relationshipType);
-        IEnumerable<TSqlObject> GetReferencing(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances();
-        IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(DacQueryScopes queryScopes);
-        IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(ModelRelationshipClass relationshipType);
-        IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
-        string GetScript();
-        SourceInformation GetSourceInformation();
-        ModelTypeClass ObjectType { get; }
-        object this[ModelPropertyClass property] { get; }
-        bool TryGetAst(out TSqlScript objectAst);
-        bool TryGetScript(out string objectScript);
-    }
+    public ObjectIdentifier Name { get; }
+    public TSqlObject Element { get; }
+    public TSqlScript GetAst();
+    public IEnumerable<TSqlObject> GetChildren();
+    public IEnumerable<TSqlObject> GetChildren(DacQueryScopes queryScopes);
+    public object GetMetadata(ModelMetadataClass metadata);
+    public T GetMetadata<T>(ModelMetadataClass metadata);
+    public TSqlObject GetParent();
+    public TSqlObject GetParent(DacQueryScopes queryScopes);
+    public object GetProperty(ModelPropertyClass property);
+    public T GetProperty<T>(ModelPropertyClass property);
+    public IEnumerable<TSqlObject> GetReferenced();
+    public IEnumerable<TSqlObject> GetReferenced(DacQueryScopes queryScopes);
+    public IEnumerable<TSqlObject> GetReferenced(ModelRelationshipClass relationshipType);
+    public IEnumerable<TSqlObject> GetReferenced(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances();
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(DacExternalQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(DacQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType);
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType, DacExternalQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencedRelationshipInstances(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
+    public IEnumerable<TSqlObject> GetReferencing();
+    public IEnumerable<TSqlObject> GetReferencing(DacQueryScopes queryScopes);
+    public IEnumerable<TSqlObject> GetReferencing(ModelRelationshipClass relationshipType);
+    public IEnumerable<TSqlObject> GetReferencing(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances();
+    public IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(DacQueryScopes queryScopes);
+    public IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(ModelRelationshipClass relationshipType);
+    public IEnumerable<ModelRelationshipInstance> GetReferencingRelationshipInstances(ModelRelationshipClass relationshipType, DacQueryScopes queryScopes);
+    public string GetScript();
+    public SourceInformation GetSourceInformation();
+    public ModelTypeClass ObjectType { get; }
+    public object this[ModelPropertyClass property] { get; }
+    public bool TryGetAst(out TSqlScript objectAst);
+    public bool TryGetScript(out string objectScript);
 }
+#pragma warning restore CA1716
