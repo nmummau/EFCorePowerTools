@@ -96,7 +96,7 @@ internal static class ScaffoldHelper
         "while",
     };
 
-    public static SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, GeneratedFileFormat fileFormat)
+    public static SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, GeneratedFileFormat fileFormat)
     {
         ArgumentNullException.ThrowIfNull(scaffoldedModel);
 

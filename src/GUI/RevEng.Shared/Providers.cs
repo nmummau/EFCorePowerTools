@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -103,6 +104,7 @@ public static class Providers
         return GetReadMeText(commandOptions, template, packages, redactedConnectionString);
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; supported provider packages no longer depend on this flag.")]
     public static List<NuGetPackage> GetNeededPackages(DatabaseType databaseType, bool useSpatial, bool useNodaTime, bool useDateOnlyTimeOnly, bool useHierarchyId, bool discoverMultipleResultSets, bool hasProcedures, CodeGenerationMode codeGenerationMode)
     {
         // Update versions here when adding provider and other updates

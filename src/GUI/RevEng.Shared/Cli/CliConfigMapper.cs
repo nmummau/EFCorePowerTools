@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -134,6 +135,7 @@ public static class CliConfigMapper
         return options;
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; configuration mapping is independent of the EF Core version.")]
     public static bool TryGetCliConfig(string fullPath, string connectionString, DatabaseType databaseType, List<TableModel> objects, CodeGenerationMode codeGenerationMode, out CliConfig config, out List<string> warnings)
     {
         var cliConfigExists = fullPath != null && File.Exists(fullPath);

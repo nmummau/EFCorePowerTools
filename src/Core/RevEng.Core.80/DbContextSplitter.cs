@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace RevEng.Core;
 public static class DbContextSplitter
 {
     // Adapted from https://github.com/lauxjpn/DbContextOnModelCreatingSplitter
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; the context name is read from the source file.")]
     public static List<string> Split(string dbContextPath, string configNamespace, bool supportNullable, string dbContextName, GeneratedFileFormat fileFormat)
     {
         ArgumentNullException.ThrowIfNull(dbContextPath);

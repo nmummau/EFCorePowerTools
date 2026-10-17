@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Scaffolding;
@@ -15,6 +16,7 @@ public class DiagramBuilder
     private readonly DataApiBuilderOptions dataApiBuilderOptions;
     private readonly List<string> schemas = Enumerable.Empty<string>().ToList();
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the existing constructor signature and schema filtering behavior.")]
     public DiagramBuilder(DataApiBuilderOptions dataApiBuilderCommandOptions, List<string> schemas)
     {
         dataApiBuilderOptions = dataApiBuilderCommandOptions;

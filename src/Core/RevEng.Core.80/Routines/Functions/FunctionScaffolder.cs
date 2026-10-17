@@ -29,7 +29,7 @@ public abstract class FunctionScaffolder : IRoutineScaffolder
 
     internal IndentedStringBuilder Sb { get; set; }
 
-    public SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, bool useInternalAccessModifier, bool useNullableReferences, GeneratedFileFormat fileFormat) => ScaffoldHelper.Save(scaffoldedModel, outputDir, nameSpaceValue, useAsyncCalls, fileFormat);
+    public SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, bool useInternalAccessModifier, bool useNullableReferences, GeneratedFileFormat fileFormat) => ScaffoldHelper.Save(scaffoldedModel, outputDir, fileFormat);
 
     public ScaffoldedModel ScaffoldModel(RoutineModel model, ModuleScaffolderOptions scaffolderOptions, List<string> schemas, ref List<string> errors)
     {

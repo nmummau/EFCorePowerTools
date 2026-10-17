@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NpgsqlTypes;
 using RevEng.Core.Abstractions.Metadata;
@@ -87,6 +88,7 @@ public static class PostgresNpgsqlTypeExtensions
         return GetClrType(moduleResultElement.StoreType, moduleResultElement.Nullable, moduleResultElement.Name);
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; PostgreSQL type mapping does not depend on parameter position.")]
     public static Type GetClrType(string storeType, bool isNullable, string objectName, bool asParameter = false)
     {
         var sqlType = GetNpgsqlDbType(storeType);
