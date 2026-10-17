@@ -1,32 +1,31 @@
 using Microsoft.EntityFrameworkCore;
 using PostgresTester.Models;
 
-namespace PostgresTester
+namespace PostgresTester;
+
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
+        var options = new DbContextOptionsBuilder<NorthwindContext>()
+            .UseNpgsql("Host=localhost;Database=Northwind;Username=postgres;Password=postgres")
+            .Options;
+
+        using (var db = new Models.NorthwindContext(options))
         {
-            var options = new DbContextOptionsBuilder<NorthwindContext>()
-                .UseNpgsql("Host=localhost;Database=Northwind;Username=postgres;Password=postgres")
-                .Options;
+            var sum = new OutputParameter<int?>();
 
-            using (var db = new Models.NorthwindContext(options))
+            var res1 = await db.Functions.sum_xyAsync(1, 2, sum);
+
+            if (sum.Value != 3)
             {
-                var sum = new OutputParameter<int?>();
+                Console.WriteLine($"AssertEqual failed. Expected: \"3\". Actual: {sum.Value}.");
+            }
 
-                var res1 = await db.Functions.sum_xyAsync(1, 2, sum);
-
-                if (sum.Value != 3)
-                {
-                    Console.WriteLine($"AssertEqual failed. Expected: \"3\". Actual: {sum.Value}.");
-                }
-
-                var result = await db.Functions.CustOrderHistAsync("ALFKI");
-                if (result.Count != 11)
-                {
-                    Console.WriteLine($"AssertEqual failed. Expected: \"11\". Actual: {result.Count}.");
-                }
+            var result = await db.Functions.CustOrderHistAsync("ALFKI");
+            if (result.Count != 11)
+            {
+                Console.WriteLine($"AssertEqual failed. Expected: \"11\". Actual: {result.Count}.");
             }
         }
     }

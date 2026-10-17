@@ -2,16 +2,15 @@ using System.Linq;
 using ConsoleApp.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConsoleApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ChinookContext>();
+namespace ConsoleApp;
 
-            using var db = new ChinookContext(optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Chinook;Integrated Security=True", x => x.UseNetTopologySuite()).Options);
-            var result = db.Customers.ToList();
-        }
+class Program
+{
+    static void Main(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ChinookContext>();
+
+        using var db = new ChinookContext(optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Chinook;Integrated Security=True", x => x.UseNetTopologySuite()).Options);
+        var result = db.Customers.ToList();
     }
 }
