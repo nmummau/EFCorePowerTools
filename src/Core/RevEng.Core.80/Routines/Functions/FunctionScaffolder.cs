@@ -43,9 +43,9 @@ public abstract class FunctionScaffolder : IRoutineScaffolder
 
         errors.AddRange(model.Errors);
 
-        schemas = schemas ?? new List<string>();
+        schemas ??= new List<string>();
 
-        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (!(r is Function f) || !f.IsScalar)))
+        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (r is not Function f || !f.IsScalar)))
         {
             var i = 1;
 

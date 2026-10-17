@@ -55,7 +55,7 @@ public static class DataApiBuilderOptionsExtensions
             ms.Close();
             return true;
         }
-        catch (Exception ex) when (ex is ArgumentNullException || ex is EncoderFallbackException)
+        catch (Exception ex) when (ex is ArgumentNullException or EncoderFallbackException)
         {
             deserialized = null;
             return false;

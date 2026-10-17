@@ -369,7 +369,7 @@ public class ReverseEngineerScaffolder : IReverseEngineerScaffolder
         var namespaceKeyWord = "namespace ";
         var fileNamespace = code.Split(Separator, StringSplitOptions.None)
                              .First(lc => lc.StartsWith(namespaceKeyWord, StringComparison.Ordinal));
-        return fileNamespace.Substring(namespaceKeyWord.Length);
+        return fileNamespace[namespaceKeyWord.Length..];
     }
 
     private static string AppendSchemaNamespaceToDbcontext(string code, HashSet<string> codeFileNamespaces)
@@ -420,7 +420,7 @@ public class ReverseEngineerScaffolder : IReverseEngineerScaffolder
         var cSharp10NameSpaceStyle = newNameSpaceLine.EndsWith(';');
         if (cSharp10NameSpaceStyle)
         {
-            newNameSpaceLine = newNameSpaceLine.Substring(0, newNameSpaceLine.Length - 1);
+            newNameSpaceLine = newNameSpaceLine[..^1];
         }
 
         var originalLastUsing = codeLines.Last(l => l.StartsWith(usingKeyWord, StringComparison.Ordinal));
@@ -437,7 +437,7 @@ public class ReverseEngineerScaffolder : IReverseEngineerScaffolder
             newUsings.AppendLine(";");
         }
 
-        newNameSpaceLine = newNameSpaceLine + $".{entityTypeSchemaWithSuffix}";
+        newNameSpaceLine += $".{entityTypeSchemaWithSuffix}";
         if (cSharp10NameSpaceStyle)
         {
             newNameSpaceLine += ";";

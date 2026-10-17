@@ -241,12 +241,7 @@ internal static class ScaffoldHelper
 
         var numberOfNames = model.Routines.Count(p => p.Name == routine.Name);
 
-        if (numberOfNames > 1)
-        {
-            return routine.Name + CultureInfo.InvariantCulture.TextInfo.ToTitleCase(routine.Schema);
-        }
-
-        return routine.Name;
+        return numberOfNames > 1 ? routine.Name + CultureInfo.InvariantCulture.TextInfo.ToTitleCase(routine.Schema) : routine.Name;
     }
 
     private static string GenerateIdentifier(string value)

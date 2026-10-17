@@ -26,12 +26,7 @@ public abstract class SqlServerRoutineModelFactory
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(module);
 
-        if (options.UseLegacyResultSetDiscovery)
-        {
-            return true;
-        }
-
-        return options.ModulesUsingLegacyDiscovery?.Contains($"[{module.Schema}].[{module.Name}]") ?? false;
+        return options.UseLegacyResultSetDiscovery || (options.ModulesUsingLegacyDiscovery?.Contains($"[{module.Schema}].[{module.Name}]") ?? false);
     }
 
     internal static void AddUnnamedColumnErrors(List<string> errors, string routineType, Routine module)
@@ -273,7 +268,7 @@ SELECT
                 var parameterName = par["Parameter"].ToString();
                 if (parameterName!.StartsWith('@'))
                 {
-                    parameterName = parameterName.Substring(1);
+                    parameterName = parameterName[1..];
                 }
 
                 var parameter = new ModuleParameter()

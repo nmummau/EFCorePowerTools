@@ -76,9 +76,9 @@ public class TableListBuilder
     {
         var result = new List<TableModel>();
 
-        if (databaseType != DatabaseType.SQLServer
-            && databaseType != DatabaseType.SQLServerDacpac
-            && databaseType != DatabaseType.Npgsql)
+        if (databaseType is not DatabaseType.SQLServer
+            and not DatabaseType.SQLServerDacpac
+            and not DatabaseType.Npgsql)
         {
             return result;
         }
@@ -89,7 +89,7 @@ public class TableListBuilder
             Modules = new List<string>(),
         };
 
-        var procedureModel = procedureModelFactory!.Create(connectionString, procedureModelOptions);
+        var procedureModel = procedureModelFactory.Create(connectionString, procedureModelOptions);
 
         foreach (var procedure in procedureModel.Routines)
         {
@@ -103,8 +103,8 @@ public class TableListBuilder
     {
         var result = new List<TableModel>();
 
-        if (databaseType != DatabaseType.SQLServer
-            && databaseType != DatabaseType.SQLServerDacpac)
+        if (databaseType is not DatabaseType.SQLServer
+            and not DatabaseType.SQLServerDacpac)
         {
             return result;
         }
@@ -115,7 +115,7 @@ public class TableListBuilder
             Modules = new List<string>(),
         };
 
-        var functionModel = functionModelFactory!.Create(connectionString, functionModelOptions);
+        var functionModel = functionModelFactory.Create(connectionString, functionModelOptions);
 
         foreach (var function in functionModel.Routines)
         {
@@ -129,7 +129,7 @@ public class TableListBuilder
     {
         var dbModelOptions = new DatabaseModelFactoryOptions(schemas: schemas?.Select(s => s.Name));
 
-        databaseModel = databaseModelFactory!.Create(connectionString, dbModelOptions);
+        databaseModel = databaseModelFactory.Create(connectionString, dbModelOptions);
         return databaseModel;
     }
 }

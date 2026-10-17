@@ -286,10 +286,10 @@ public static class DebugViewParser
             var noField = !parts[2].EndsWith(")", StringComparison.Ordinal);
 
             var fieldStripped = parts[1].StartsWith("(", StringComparison.Ordinal)
-                ? parts[1].Remove(parts[1].Length - 1, 1).Remove(0, 1)
+                ? parts[1][..^1][1..]
                 : parts[1];
             var typeStripped = parts[2].EndsWith(")", StringComparison.Ordinal)
-                ? parts[2].Remove(parts[2].Length - 1)
+                ? parts[2][..^1]
                 : parts[1];
 
             var field = System.Security.SecurityElement.Escape(fieldStripped);
@@ -380,12 +380,12 @@ public static class DebugViewParser
                 {
                     if (parts[x].StartsWith("{'", StringComparison.Ordinal))
                     {
-                        parts[x] = parts[x].Substring(2);
+                        parts[x] = parts[x][2..];
                     }
 
                     if (parts[x].EndsWith("'}", StringComparison.Ordinal))
                     {
-                        parts[x] = parts[x].Substring(0, parts[x].LastIndexOf("'}", StringComparison.Ordinal));
+                        parts[x] = parts[x][..parts[x].LastIndexOf("'}", StringComparison.Ordinal)];
                     }
                 }
 

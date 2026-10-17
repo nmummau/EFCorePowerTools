@@ -65,12 +65,7 @@ public static class SqlServerSqlTypeExtensions
 
         var sqlDbType = GetSqlDbType(storeType);
 
-        if (sqlDbType is SqlDbType.NChar or SqlDbType.NVarChar)
-        {
-            return length.Value / 2;
-        }
-
-        return length;
+        return sqlDbType is SqlDbType.NChar or SqlDbType.NVarChar ? length.Value / 2 : length;
     }
 
     public static Type ClrTypeFromSqlParameter(this ModuleParameter storedProcedureParameter, bool asMethodParameter = false)
@@ -207,12 +202,7 @@ public static class SqlServerSqlTypeExtensions
             throw new ArgumentException("storeType not specified");
         }
 
-        var cleanedTypeName = RemoveMatchingBraces(storeType);
-
-        if (cleanedTypeName == null)
-        {
-            throw new ArgumentOutOfRangeException(nameof(storeType), $"Unable to remove braces: {storeType}");
-        }
+        var cleanedTypeName = RemoveMatchingBraces(storeType) ?? throw new ArgumentOutOfRangeException(nameof(storeType), $"Unable to remove braces: {storeType}");
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
         if (SqlTypeAliases.TryGetValue(cleanedTypeName.ToLowerInvariant(), out var alias))
@@ -221,12 +211,9 @@ public static class SqlServerSqlTypeExtensions
         }
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
-        if (!Enum.TryParse(cleanedTypeName, true, out SqlDbType result))
-        {
-            throw new ArgumentOutOfRangeException(nameof(storeType), $"cleanedTypeName: {cleanedTypeName}");
-        }
-
-        return result;
+        return !Enum.TryParse(cleanedTypeName, true, out SqlDbType result)
+            ? throw new ArgumentOutOfRangeException(nameof(storeType), $"cleanedTypeName: {cleanedTypeName}")
+            : result;
     }
 
     private static string RemoveMatchingBraces(string s)

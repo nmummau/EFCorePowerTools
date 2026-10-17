@@ -36,7 +36,7 @@ public static class DbContextSplitter
 
         var configurationNamespace = configNamespace ?? contextNamespace;
 
-        configurationNamespace = configurationNamespace + ".Configurations";
+        configurationNamespace += ".Configurations";
 
         var contextUsingStatements = Regex.Matches(source, @"^using\s+.*?;", RegexOptions.Multiline | RegexOptions.Singleline, TimeSpan.FromSeconds(5))
             .Cast<Match>()
@@ -159,7 +159,7 @@ public static class DbContextSplitter
 
             if (line.Trim().StartsWith("modelBuilder.Entity<", StringComparison.InvariantCulture))
             {
-                spaces = line.Substring(0, line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase));
+                spaces = line[..line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase)];
                 inEntityBuilder = true;
                 if (!configLinesWritten)
                 {
@@ -211,7 +211,7 @@ public static class DbContextSplitter
         {
             if (line.Trim().StartsWith("modelBuilder.Entity<", StringComparison.InvariantCulture))
             {
-                spaces = line.Substring(0, line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase));
+                spaces = line[..line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase)];
                 inEntityBuilder = true;
                 continue;
             }
