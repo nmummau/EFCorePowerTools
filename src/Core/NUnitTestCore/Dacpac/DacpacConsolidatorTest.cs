@@ -19,8 +19,5 @@ public class DacpacConsolidatorTest
         Assert.Equal(dacPath, result);
     }
 
-    private string TestPath(string file)
-    {
-        return System.IO.Path.Combine(AppContext.BaseDirectory, "Dacpac", file);
-    }
+    private string TestPath(string file) => System.IO.Path.Combine(AppContext.BaseDirectory, "Dacpac", file);
 }

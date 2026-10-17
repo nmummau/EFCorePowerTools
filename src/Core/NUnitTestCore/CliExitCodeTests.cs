@@ -27,7 +27,8 @@ public sealed class CliExitCodeTests : IDisposable
         configPath = Path.Combine(workDirectory, "efcpt-config.json");
         File.WriteAllText(
             configPath,
-            @"{
+                                 /*lang=json,strict*/
+                                 @"{
   ""code-generation"": { ""use-t4"": true, ""refresh-object-lists"": true },
   ""names"": { ""dbcontext-name"": ""TestContext"", ""root-namespace"": ""TestNamespace"" }
 }");

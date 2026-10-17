@@ -10,7 +10,7 @@ namespace UnitTests;
 
 public class DgmlTest
 {
-    private string template;
+    private readonly string template;
 
     public DgmlTest()
     {
@@ -211,22 +211,12 @@ public class DgmlTest
     {
         var resourceName = "NUnitTestCore.template.dgml";
 
-        using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-        {
-            using (var reader = new StreamReader(stream ?? throw new InvalidOperationException()))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        using var reader = new StreamReader(stream ?? throw new InvalidOperationException());
+        return reader.ReadToEnd();
     }
 
-    private string[] ReadAllLines(string file)
-    {
-        return File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Dgml", file));
-    }
+    private string[] ReadAllLines(string file) => File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Dgml", file));
 
-    private string ReadAllText(string file)
-    {
-        return File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Dgml", file));
-    }
+    private string ReadAllText(string file) => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Dgml", file));
 }

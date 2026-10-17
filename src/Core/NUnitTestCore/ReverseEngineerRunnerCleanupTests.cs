@@ -264,10 +264,7 @@ public class ReverseEngineerRunnerCleanupTests
         return codeFile;
     }
 
-    private static void InvokeTryRemoveFile(string codeFile)
-    {
-        ReverseEngineerRunner.TryRemoveFile(codeFile);
-    }
+    private static void InvokeTryRemoveFile(string codeFile) => ReverseEngineerRunner.TryRemoveFile(codeFile);
 
     private static void RemoveIfExists(string codeFile)
     {

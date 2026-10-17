@@ -148,14 +148,11 @@ public class ProcedureScaffolderTests
         return procedure;
     }
 
-    private static ModuleScaffolderOptions CreateScaffolderOptions()
+    private static ModuleScaffolderOptions CreateScaffolderOptions() => new()
     {
-        return new ModuleScaffolderOptions
-        {
-            ContextName = "TestContext",
-            ContextDir = Path.GetTempPath(),
-            ContextNamespace = "TestNamespace",
-            ModelNamespace = "TestNamespace",
-        };
-    }
+        ContextName = "TestContext",
+        ContextDir = Path.GetTempPath(),
+        ContextNamespace = "TestNamespace",
+        ModelNamespace = "TestNamespace",
+    };
 }

@@ -338,9 +338,7 @@ public class CliObjectListTest
         }
     }
 
-    private static List<TableModel> GetDefaultTables(DatabaseType databaseType)
-    {
-        return new List<TableModel>()
+    private static List<TableModel> GetDefaultTables(DatabaseType databaseType) => new()
         {
             new("Users", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()
             {
@@ -371,7 +369,6 @@ public class CliObjectListTest
                 new("Name", "", false, false)
             })
         };
-    }
 
     private void WriteConfigFile(CliConfig configToWrite, string fullPath)
     {
@@ -379,15 +376,9 @@ public class CliObjectListTest
         File.WriteAllText(fullPath, JsonSerializer.Serialize(configToWrite, options), Encoding.UTF8);
     }
 
-    private void RemoveConfigFile(string fullPath)
-    {
-        File.Delete(fullPath);
-    }
+    private void RemoveConfigFile(string fullPath) => File.Delete(fullPath);
 
-    private string TestPath(string file)
-    {
-        return Path.Combine(cliTestDirectory, file);
-    }
+    private string TestPath(string file) => Path.Combine(cliTestDirectory, file);
 
     private CliConfig GetConfig()
     {

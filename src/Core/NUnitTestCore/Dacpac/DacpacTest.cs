@@ -15,11 +15,11 @@ public class DacpacTest
 {
     private const string SqlServerSparseAnnotation = "SqlServer:Sparse";
     private const string SqlServerIsTemporalAnnotation = "SqlServer:IsTemporal";
-    private string dacpac;
-    private string dacpacDescending;
-    private string dacpacSparse;
-    private string dacpacViews;
-    private string dacpacQuirk;
+    private readonly string dacpac;
+    private readonly string dacpacDescending;
+    private readonly string dacpacSparse;
+    private readonly string dacpacViews;
+    private readonly string dacpacQuirk;
 
     public DacpacTest()
     {
@@ -111,7 +111,7 @@ GO
         var dbModel = factory.Create(dacpac, options);
 
         // Assert
-        Assert.Equal(11, dbModel.Tables.Count());
+        Assert.Equal(11, dbModel.Tables.Count);
     }
 
     [Fact]
@@ -125,7 +125,7 @@ GO
         var dbModel = factory.Create(dacpacViews, options);
 
         // Assert
-        Assert.Equal(28, dbModel.Tables[0].Columns.Count());
+        Assert.Equal(28, dbModel.Tables[0].Columns.Count);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ GO
         var dbModel = factory.Create(dacpac, options);
 
         // Assert
-        Assert.Equal(3, dbModel.Tables.Count());
+        Assert.Equal(3, dbModel.Tables.Count);
         Assert.Equal("Album", dbModel.Tables[0].Name);
         Assert.Single(dbModel.Tables[0].ForeignKeys);
         Assert.Equal(3, dbModel.Tables[0].Columns.Count);
@@ -214,7 +214,7 @@ GO
         var dbModel = factory.Create(dacpacQuirk, options);
 
         // Assert
-        Assert.Equal(2, dbModel.Tables.Count());
+        Assert.Equal(2, dbModel.Tables.Count);
         Assert.Equal("FilteredIndexTable", dbModel.Tables[1].Name);
         Assert.Empty(dbModel.Tables[1].ForeignKeys);
         Assert.Equal(2, dbModel.Tables[1].Columns.Count);
@@ -335,7 +335,7 @@ GO
         var dbModel = factory.Create(TestPath("AdventureWorks2014.dacpac"), options);
 
         // Assert
-        Assert.Equal(91, dbModel.Tables.Count());
+        Assert.Equal(91, dbModel.Tables.Count);
     }
 
     [Fact]
@@ -363,7 +363,7 @@ GO
         var dbModel = factory.Create(TestPath("Issue210.dacpac"), options);
 
         // Assert
-        Assert.Equal(2, dbModel.Tables.Count());
+        Assert.Equal(2, dbModel.Tables.Count);
     }
 
     [Fact]
@@ -390,7 +390,7 @@ GO
         var dbModel = factory.Create(TestPath("Issue1262.dacpac"), options);
 
         // Assert
-        Assert.Equal(2, dbModel.Tables.Count());
+        Assert.Equal(2, dbModel.Tables.Count);
         Assert.Equal(1, dbModel.Tables.Count(x => x.Schema == "mat"));
         Assert.Equal(1, dbModel.Tables.Count(x => x.Schema == "mat2"));
     }
@@ -403,7 +403,7 @@ GO
 
         var dbModel = factory.Create(TestPath("Issue3341.dacpac"), options);
 
-        Assert.Equal(3, dbModel.Tables.Count());
+        Assert.Equal(3, dbModel.Tables.Count);
 
         var bin = dbModel.Tables.Single(t => t.Schema == "dbo" && t.Name == "Bin");
         var inventoryNodeTypeCode = bin.Columns.Single(c => c.Name == "InventoryNodeTypeCode");
@@ -472,7 +472,7 @@ GO
             var dbModel = factory.Create(dacpacPath, options);
             var table = dbModel.Tables.Single(t => t.Schema == "dbo" && t.Name == "SdrSearch");
 
-            Assert.Equal(2, table.Columns.Count());
+            Assert.Equal(2, table.Columns.Count);
 
             var embedding = table.Columns.Single(c => c.Name == "Embedding");
 
@@ -665,10 +665,7 @@ GO
         Assert.Equal(["JobCandidateID", "RANK"], multipleResultRoutine.Results[1].Select(c => c.Name));
     }
 
-    private static string BuildDacpac(params string[] sqlScripts)
-    {
-        return BuildDacpac(SqlServerVersion.Sql160, sqlScripts);
-    }
+    private static string BuildDacpac(params string[] sqlScripts) => BuildDacpac(SqlServerVersion.Sql160, sqlScripts);
 
     private static string BuildDacpac(SqlServerVersion version, params string[] sqlScripts)
     {
@@ -685,8 +682,5 @@ GO
         return path;
     }
 
-    private string TestPath(string file)
-    {
-        return Path.Combine(AppContext.BaseDirectory, "Dacpac", file);
-    }
+    private string TestPath(string file) => Path.Combine(AppContext.BaseDirectory, "Dacpac", file);
 }

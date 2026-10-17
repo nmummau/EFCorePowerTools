@@ -10,19 +10,13 @@ public class CustomHumanizerPluralizerTest
     [InlineData("AuditStatus")]
     [InlineData("TelemetryData")]
     [InlineData("Delta")]
-    public void DoesNotPluralizeCustomUncountableWords(string word)
-    {
-        Pluralize(word);
-    }
+    public void DoesNotPluralizeCustomUncountableWords(string word) => Pluralize(word);
 
     [Theory]
     [InlineData("AuditStatus")]
     [InlineData("TelemetryData")]
     [InlineData("Delta")]
-    public void DoesNotSingularizeCustomUncountableWords(string word)
-    {
-        Singularize(word);
-    }
+    public void DoesNotSingularizeCustomUncountableWords(string word) => Singularize(word);
 
     private static void Pluralize(string word)
     {
