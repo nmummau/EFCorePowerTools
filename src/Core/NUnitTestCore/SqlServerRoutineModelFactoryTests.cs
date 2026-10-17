@@ -5,131 +5,130 @@ using RevEng.Core.Routines;
 using RevEng.Core.Routines.Procedures;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests;
+
+public class SqlServerRoutineModelFactoryTests
 {
-    public class SqlServerRoutineModelFactoryTests
+    [Fact]
+    public void ShouldUseLegacyResultSetDiscoveryReturnsTrueWhenGlobalOptionEnabled()
     {
-        [Fact]
-        public void ShouldUseLegacyResultSetDiscoveryReturnsTrueWhenGlobalOptionEnabled()
+        var options = new ModuleModelFactoryOptions
         {
-            var options = new ModuleModelFactoryOptions
-            {
-                UseLegacyResultSetDiscovery = true,
-            };
+            UseLegacyResultSetDiscovery = true,
+        };
 
-            var module = new Procedure
-            {
-                Schema = "dbo",
-                Name = "StoGetSomeData",
-            };
-
-            var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
-
-            Assert.True(useLegacy);
-        }
-
-        [Fact]
-        public void ShouldUseLegacyResultSetDiscoveryReturnsTrueWhenModuleIsConfiguredForLegacyDiscovery()
+        var module = new Procedure
         {
-            var options = new ModuleModelFactoryOptions
-            {
-                ModulesUsingLegacyDiscovery = ["[dbo].[StoGetSomeData]"],
-            };
+            Schema = "dbo",
+            Name = "StoGetSomeData",
+        };
 
-            var module = new Procedure
-            {
-                Schema = "dbo",
-                Name = "StoGetSomeData",
-            };
+        var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
 
-            var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
+        Assert.True(useLegacy);
+    }
 
-            Assert.True(useLegacy);
-        }
-
-        [Fact]
-        public void ShouldUseLegacyResultSetDiscoveryReturnsFalseWhenNeitherGlobalNorModuleOptionIsEnabled()
+    [Fact]
+    public void ShouldUseLegacyResultSetDiscoveryReturnsTrueWhenModuleIsConfiguredForLegacyDiscovery()
+    {
+        var options = new ModuleModelFactoryOptions
         {
-            var options = new ModuleModelFactoryOptions
-            {
-                ModulesUsingLegacyDiscovery = ["[dbo].[SomeOtherProcedure]"],
-            };
+            ModulesUsingLegacyDiscovery = ["[dbo].[StoGetSomeData]"],
+        };
 
-            var module = new Procedure
-            {
-                Schema = "dbo",
-                Name = "StoGetSomeData",
-            };
-
-            var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
-
-            Assert.False(useLegacy);
-        }
-
-        [Fact]
-        public void UseStoredProcedureResultSetFallbackDefaultsToTrue()
+        var module = new Procedure
         {
-            var options = new ModuleModelFactoryOptions();
+            Schema = "dbo",
+            Name = "StoGetSomeData",
+        };
 
-            Assert.True(options.UseStoredProcedureResultSetFallback);
-        }
+        var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
 
-        [Theory]
-        [InlineData(208, "Invalid object name '#OrderTable'.", true)]
-        [InlineData(208, "Invalid object name '#OrderLegacyTable'.", true)]
-        [InlineData(208, "Invalid object name '#OrderSummaryTable'.", true)]
-        [InlineData(208, "Invalid object name '#OrderSearchTable'.", true)]
-        public void ShouldTryDefinitionFallbackMatchesObservedDockerPlaygroundLiveDbFailures(int errorNumber, string message, bool expected)
+        Assert.True(useLegacy);
+    }
+
+    [Fact]
+    public void ShouldUseLegacyResultSetDiscoveryReturnsFalseWhenNeitherGlobalNorModuleOptionIsEnabled()
+    {
+        var options = new ModuleModelFactoryOptions
         {
-            var result = SqlServerStoredProcedureModelFactory.ShouldTryDefinitionFallback(errorNumber, message);
+            ModulesUsingLegacyDiscovery = ["[dbo].[SomeOtherProcedure]"],
+        };
 
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void AddUnnamedColumnErrorsAddsAllUnnamedMessageWhenAllResultColumnsAreUnnamed()
+        var module = new Procedure
         {
-            var errors = new List<string>();
-            var module = new Procedure
-            {
-                Schema = "dbo",
-                Name = "StoGetSomeData",
-                UnnamedColumnCount = 2,
-                Results =
-                [
-                    [new ModuleResultElement(), new ModuleResultElement()],
-                ],
-            };
+            Schema = "dbo",
+            Name = "StoGetSomeData",
+        };
 
-            SqlServerRoutineModelFactory.AddUnnamedColumnErrors(errors, "PROCEDURE", module);
+        var useLegacy = SqlServerRoutineModelFactory.ShouldUseLegacyResultSetDiscovery(options, module);
 
-            Assert.Equal(
+        Assert.False(useLegacy);
+    }
+
+    [Fact]
+    public void UseStoredProcedureResultSetFallbackDefaultsToTrue()
+    {
+        var options = new ModuleModelFactoryOptions();
+
+        Assert.True(options.UseStoredProcedureResultSetFallback);
+    }
+
+    [Theory]
+    [InlineData(208, "Invalid object name '#OrderTable'.", true)]
+    [InlineData(208, "Invalid object name '#OrderLegacyTable'.", true)]
+    [InlineData(208, "Invalid object name '#OrderSummaryTable'.", true)]
+    [InlineData(208, "Invalid object name '#OrderSearchTable'.", true)]
+    public void ShouldTryDefinitionFallbackMatchesObservedDockerPlaygroundLiveDbFailures(int errorNumber, string message, bool expected)
+    {
+        var result = SqlServerStoredProcedureModelFactory.ShouldTryDefinitionFallback(errorNumber, message);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void AddUnnamedColumnErrorsAddsAllUnnamedMessageWhenAllResultColumnsAreUnnamed()
+    {
+        var errors = new List<string>();
+        var module = new Procedure
+        {
+            Schema = "dbo",
+            Name = "StoGetSomeData",
+            UnnamedColumnCount = 2,
+            Results =
             [
-                "PROCEDURE 'dbo.StoGetSomeData' has 2 unnamed columns out of 4."
-            ], errors);
-        }
+                [new ModuleResultElement(), new ModuleResultElement()],
+            ],
+        };
 
-        [Fact]
-        public void AddUnnamedColumnErrorsDoesNotAddAllUnnamedMessageWhenNamedResultColumnsRemain()
+        SqlServerRoutineModelFactory.AddUnnamedColumnErrors(errors, "PROCEDURE", module);
+
+        Assert.Equal(
+        [
+            "PROCEDURE 'dbo.StoGetSomeData' has 2 unnamed columns out of 4."
+        ], errors);
+    }
+
+    [Fact]
+    public void AddUnnamedColumnErrorsDoesNotAddAllUnnamedMessageWhenNamedResultColumnsRemain()
+    {
+        var errors = new List<string>();
+        var module = new Procedure
         {
-            var errors = new List<string>();
-            var module = new Procedure
-            {
-                Schema = "dbo",
-                Name = "StoGetSomeData",
-                UnnamedColumnCount = 1,
-                Results =
-                [
-                    [new ModuleResultElement(), new ModuleResultElement()],
-                ],
-            };
-
-            SqlServerRoutineModelFactory.AddUnnamedColumnErrors(errors, "PROCEDURE", module);
-
-            Assert.Equal(
+            Schema = "dbo",
+            Name = "StoGetSomeData",
+            UnnamedColumnCount = 1,
+            Results =
             [
-                "PROCEDURE 'dbo.StoGetSomeData' has 1 unnamed columns out of 3.",
-            ], errors);
-        }
+                [new ModuleResultElement(), new ModuleResultElement()],
+            ],
+        };
+
+        SqlServerRoutineModelFactory.AddUnnamedColumnErrors(errors, "PROCEDURE", module);
+
+        Assert.Equal(
+        [
+            "PROCEDURE 'dbo.StoGetSomeData' has 1 unnamed columns out of 3.",
+        ], errors);
     }
 }
