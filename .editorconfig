@@ -434,8 +434,8 @@ dotnet_naming_rule.parameters_rule.severity             = warning
 
 # Microsoft - Code Analysis
 # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
-dotnet_diagnostic.CA1014.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1014.md
-dotnet_diagnostic.CA1068.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1068.md
+dotnet_diagnostic.CA1014.severity = none            # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1014
+dotnet_diagnostic.CA1068.severity = error           # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1068
 dotnet_diagnostic.CA1305.severity = error
 dotnet_diagnostic.CA1308.severity = suggestion      # Normalize strings to uppercase
 dotnet_diagnostic.CA1510.severity = suggestion      # Use ArgumentNullException throw helper
@@ -444,7 +444,7 @@ dotnet_diagnostic.CA1512.severity = suggestion      # Use ArgumentOutOfRangeExce
 dotnet_diagnostic.CA1513.severity = suggestion      # Use ObjectDisposedException throw helper
 dotnet_diagnostic.CA1514.severity = error           # Avoid redundant length argument
 dotnet_diagnostic.CA1515.severity = suggestion      # Because an application's API isn't typically referenced from outside the assembly, types can be made internal (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1515)
-dotnet_diagnostic.CA1707.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1707.md
+dotnet_diagnostic.CA1707.severity = error           # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1707
 dotnet_diagnostic.CA1812.severity = none
 dotnet_diagnostic.CA1822.severity = suggestion
 dotnet_diagnostic.CA1849.severity = error           # Call async methods when in an async method
@@ -465,7 +465,7 @@ dotnet_diagnostic.CA1867.severity = suggestion      # Use char overload
 dotnet_diagnostic.CA1868.severity = suggestion      # Unnecessary call to 'Contains(item)'
 dotnet_diagnostic.CA1869.severity = suggestion      # Cache and reuse 'JsonSerializerOptions' instances
 dotnet_diagnostic.CA1870.severity = suggestion      # Use a cached 'SearchValues' instance
-dotnet_diagnostic.CA2007.severity = suggestion      # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA2007.md
+dotnet_diagnostic.CA2007.severity = suggestion      # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007
 dotnet_diagnostic.CA2017.severity = error           # Parameter count mismatch
 dotnet_diagnostic.CA2018.severity = error           # The count argument to Buffer.BlockCopy should specify the number of bytes to copy
 dotnet_diagnostic.CA2019.severity = error           # ThreadStatic fields should not use inline initialization
@@ -478,12 +478,12 @@ dotnet_diagnostic.CA2255.severity = suggestion      # The ModuleInitializer attr
 dotnet_diagnostic.CA2259.severity = error           # Ensure ThreadStatic is only used with static fields
 dotnet_diagnostic.CA2260.severity = error           # Implement generic math interfaces correctly
 dotnet_diagnostic.CA2261.severity = error           # Do not use ConfigureAwaitOptions.SuppressThrowing with Task<TResult>
-dotnet_diagnostic.IDE0005.severity = warning        # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/IDE0005.md
+dotnet_diagnostic.IDE0005.severity = warning        # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
 dotnet_diagnostic.IDE0010.severity = suggestion     # Populate switch
 dotnet_diagnostic.IDE0028.severity = suggestion     # Collection initialization can be simplified
 dotnet_diagnostic.IDE0021.severity = suggestion     # Use expression body for constructor
 dotnet_diagnostic.IDE0055.severity = warning        # Fix formatting
-dotnet_diagnostic.IDE0058.severity = none           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/IDE0058.md
+dotnet_diagnostic.IDE0058.severity = none           # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0058
 dotnet_diagnostic.IDE0059.severity = warning        # Remove unnecessary value assignments
 dotnet_diagnostic.IDE0061.severity = suggestion     # Use expression body for local function
 dotnet_diagnostic.IDE0130.severity = suggestion     # Namespace does not match folder structure
@@ -494,33 +494,33 @@ dotnet_diagnostic.IDE0305.severity = suggestion     # Collection initialization 
 
 # Microsoft - Compiler Errors
 # https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/
-dotnet_diagnostic.CS4014.severity = error          # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCompilerErrors/CS4014.md
+dotnet_diagnostic.CS4014.severity = error          # https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
 
 
 # StyleCop
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers
-dotnet_diagnostic.SA1009.severity = warning         # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1009.md
-dotnet_diagnostic.SA1101.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1101.md
-dotnet_diagnostic.SA1122.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1122.md
-dotnet_diagnostic.SA1133.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1133.md
-dotnet_diagnostic.SA1200.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1200.md
-dotnet_diagnostic.SA1201.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1201.md
-dotnet_diagnostic.SA1202.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1202.md
-dotnet_diagnostic.SA1204.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1204.md
-dotnet_diagnostic.SA1413.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1413.md
-dotnet_diagnostic.SA1600.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1600.md
+dotnet_diagnostic.SA1009.severity = warning         # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md
+dotnet_diagnostic.SA1101.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
+dotnet_diagnostic.SA1122.severity = error           # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1122.md
+dotnet_diagnostic.SA1133.severity = error           # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1133.md
+dotnet_diagnostic.SA1200.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md
+dotnet_diagnostic.SA1201.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1201.md
+dotnet_diagnostic.SA1202.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1202.md
+dotnet_diagnostic.SA1204.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1204.md
+dotnet_diagnostic.SA1413.severity = error           # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md
+dotnet_diagnostic.SA1600.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md
 dotnet_diagnostic.SA1601.severity = none
-dotnet_diagnostic.SA1602.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1602.md
-dotnet_diagnostic.SA1604.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1604.md
-dotnet_diagnostic.SA1623.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1623.md
-dotnet_diagnostic.SA1629.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1629.md
-dotnet_diagnostic.SA1633.severity = none            # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1633.md
-dotnet_diagnostic.SA1649.severity = error           # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/StyleCop/SA1649.md
+dotnet_diagnostic.SA1602.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1602.md
+dotnet_diagnostic.SA1604.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1604.md
+dotnet_diagnostic.SA1623.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1623.md
+dotnet_diagnostic.SA1629.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md
+dotnet_diagnostic.SA1633.severity = none            # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
+dotnet_diagnostic.SA1649.severity = error           # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1649.md
 
 
 # SonarAnalyzer.CSharp
 # https://rules.sonarsource.com/csharp
-dotnet_diagnostic.S1135.severity = suggestion       # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/SonarAnalyzerCSharp/S1135.md
+dotnet_diagnostic.S1135.severity = suggestion       # https://github.com/SonarSource/sonar-dotnet/blob/master/analyzers/rspec/cs/S1135.html
 dotnet_diagnostic.S2629.severity = none            	# Don't use string interpolation in logging message templates.
 dotnet_diagnostic.S3358.severity = none           	# Extract this nested ternary operation into an independent statement.
 dotnet_diagnostic.S6602.severity = none           	# "Find" method should be used instead of the "FirstOrDefault"
