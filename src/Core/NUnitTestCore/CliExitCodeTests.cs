@@ -94,7 +94,7 @@ public sealed class CliExitCodeTests : IDisposable
     {
         Environment.ExitCode = 0;
 
-        var run = Program.MainAsync(new[] { dacpac, "mssql", "-i", config, "-o", workDirectory });
+        var run = Program.MainAsync([dacpac, "mssql", "-i", config, "-o", workDirectory]);
         var completed = await Task.WhenAny(run, Task.Delay(RunTimeout, TestContext.Current.CancellationToken));
 
         Assert.True(completed == run, $"efcpt did not exit within {RunTimeout.TotalSeconds} seconds.");

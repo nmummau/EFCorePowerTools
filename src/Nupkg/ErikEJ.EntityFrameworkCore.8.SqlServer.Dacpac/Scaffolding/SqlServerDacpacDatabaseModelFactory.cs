@@ -26,7 +26,8 @@ public class SqlServerDacpacDatabaseModelFactory : IDatabaseModelFactory
     private static readonly HashSet<string> DateTimePrecisionTypes = ["datetimeoffset", "datetime2", "time"];
 
     private static readonly HashSet<string> MaxLengthRequiredTypes
-        = new HashSet<string> { "binary", "varbinary", "char", "varchar", "nchar", "nvarchar", "vector" };
+        = new()
+        { "binary", "varbinary", "char", "varchar", "nchar", "nvarchar", "vector" };
 
     private readonly SqlServerDacpacDatabaseModelFactoryOptions dacpacOptions;
 
@@ -784,7 +785,7 @@ public class SqlServerDacpacDatabaseModelFactory : IDatabaseModelFactory
                 }
             }
         }
-        catch (Exception ex) when (ex is InvalidDataException or IOException or System.Xml.XmlException)
+        catch (Exception ex) when (ex is InvalidDataException or IOException or XmlException)
         {
             // Not a readable zip package, or model.xml could not be parsed; nothing to extract.
         }

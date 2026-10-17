@@ -132,8 +132,8 @@ END;";
 
         Assert.Equal(2, resultSets.Count);
 
-        Assert.Equal(new[] { "CategoryId", "TotalCount" }, resultSets[0].Select(c => c.Name));
-        Assert.Equal(new[] { "CategoryId", "ItemName" }, resultSets[1].Select(c => c.Name));
+        Assert.Equal(["CategoryId", "TotalCount"], resultSets[0].Select(c => c.Name));
+        Assert.Equal(["CategoryId", "ItemName"], resultSets[1].Select(c => c.Name));
 
         var itemName = resultSets[1].Single(c => c.Name == "ItemName");
         Assert.Equal("nvarchar", itemName.StoreType);

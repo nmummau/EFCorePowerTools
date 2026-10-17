@@ -93,8 +93,8 @@ public class DabBuilderTest
         // Arrange
         var columns = new List<DatabaseColumn>
         {
-            new DatabaseColumn { Name = "Id", StoreType = "int" },
-            new DatabaseColumn { Name = "Location", StoreType = storeType }
+            new() { Name = "Id", StoreType = "int" },
+            new() { Name = "Location", StoreType = storeType }
         };
         var table = CreateDatabaseTable(columns: columns);
 
@@ -111,9 +111,9 @@ public class DabBuilderTest
         // Arrange
         var columns = new List<DatabaseColumn>
         {
-            new DatabaseColumn { Name = "Id", StoreType = "int" },
-            new DatabaseColumn { Name = "Name", StoreType = "nvarchar" },
-            new DatabaseColumn { Name = "CreatedDate", StoreType = "datetime" }
+            new() { Name = "Id", StoreType = "int" },
+            new() { Name = "Name", StoreType = "nvarchar" },
+            new() { Name = "CreatedDate", StoreType = "datetime" }
         };
         var table = CreateDatabaseTable(columns: columns);
 
@@ -188,12 +188,12 @@ public class DabBuilderTest
     private static string InvokePrivateStaticMethod(string methodName, string parameter)
     {
         var method = typeof(DabBuilder).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-        return method != null ? (string)method.Invoke(null, new object[] { parameter }) : string.Empty;
+        return method != null ? (string)method.Invoke(null, [parameter]) : string.Empty;
     }
 
     private static TResult InvokePrivateStaticMethod<TParam, TResult>(string methodName, TParam parameter)
     {
         var method = typeof(DabBuilder).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-        return method != null ? (TResult)method.Invoke(null, new object[] { parameter }) : default;
+        return method != null ? (TResult)method.Invoke(null, [parameter]) : default;
     }
 }

@@ -93,7 +93,7 @@ public class ProcedureScaffolderTests
             GenerateEmptyResultType = generateEmptyResultType,
             Results = new List<List<ModuleResultElement>>
             {
-                new List<ModuleResultElement>(),
+                new(),
             },
         };
         procedure.Parameters.Add(new ModuleParameter

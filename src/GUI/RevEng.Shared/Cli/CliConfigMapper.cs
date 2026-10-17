@@ -243,7 +243,7 @@ public static class CliConfigMapper
 
         var filters = GetFilters(entities);
 
-        var serializationTableModels = entities.Where<T>(entity => ExclusionFilter(entity, excludeAll, filters)
+        var serializationTableModels = entities.Where(entity => ExclusionFilter(entity, excludeAll, filters)
             && !string.IsNullOrEmpty(entity.Name))
             .Select(entity =>
             {

@@ -25,7 +25,7 @@ public class PostgresIndexExclusionTests
             UseInflector = true,
             Tables = new List<SerializationTableModel>
             {
-                new SerializationTableModel("public.child", ObjectType.Table, null, excludeIndex ? new[] { FilteredIndex } : null),
+                new("public.child", ObjectType.Table, null, excludeIndex ? new[] { FilteredIndex } : null),
             },
         };
         using var services = new ServiceCollection()

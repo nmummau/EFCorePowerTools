@@ -119,7 +119,7 @@ public sealed class DacpacMerger : IDisposable
 
     private TSqlModel GetModel(string source)
     {
-        if (source == sources.FirstOrDefault<string>())
+        if (source == sources.FirstOrDefault())
         {
             return first;
         }

@@ -10,21 +10,21 @@ namespace RevEng.Core.Routines.Extensions;
 
 public static class SqlServerSqlTypeExtensions
 {
-    private static readonly HashSet<SqlDbType> ScaleTypes = new HashSet<SqlDbType>
+    private static readonly HashSet<SqlDbType> ScaleTypes = new()
     {
         SqlDbType.Decimal,
         SqlDbType.Money,
         SqlDbType.SmallMoney,
     };
 
-    private static readonly HashSet<SqlDbType> VarTimeTypes = new HashSet<SqlDbType>
+    private static readonly HashSet<SqlDbType> VarTimeTypes = new()
     {
         SqlDbType.DateTimeOffset,
         SqlDbType.DateTime2,
         SqlDbType.Time,
     };
 
-    private static readonly HashSet<SqlDbType> LengthRequiredTypes = new HashSet<SqlDbType>
+    private static readonly HashSet<SqlDbType> LengthRequiredTypes = new()
     {
         SqlDbType.Binary,
         SqlDbType.VarBinary,
@@ -35,7 +35,7 @@ public static class SqlServerSqlTypeExtensions
     };
 
     private static readonly ReadOnlyDictionary<string, string> SqlTypeAliases
-    = new ReadOnlyDictionary<string, string>(
+    = new(
         new Dictionary<string, string>()
         {
             { "numeric", "decimal" },

@@ -134,7 +134,7 @@ public abstract class SqlServerRoutineModelFactory
                                 module.HasValidResultSet = false;
                                 module.Results = new List<List<ModuleResultElement>>
                                 {
-                                    new List<ModuleResultElement>(),
+                                    new(),
                                 };
 #pragma warning disable CA1308 // Normalize strings to uppercase
                                 var nl = Environment.NewLine;
@@ -396,7 +396,7 @@ ORDER BY TT.user_type_id, SC.column_id;";
 
     private static ModuleParameter GetReturnParameter() =>
         // Add parameter to hold the standard return value
-        new ModuleParameter()
+        new()
         {
             Name = "returnValue",
             StoreType = "int",

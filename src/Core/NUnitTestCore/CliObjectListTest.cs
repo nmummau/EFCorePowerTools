@@ -208,8 +208,8 @@ public class CliObjectListTest
             var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
                 DatabaseType.SQLServer,
                 GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
-                out CliConfig resultConfig,
-                out List<string> warnings);
+                out var resultConfig,
+                out var warnings);
 
             Assert.True(fetchedConfigSuccess);
             Assert.NotNull(resultConfig);
@@ -310,8 +310,8 @@ public class CliObjectListTest
             var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
                 DatabaseType.SQLServer,
                 GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
-                out CliConfig resultConfig,
-                out List<string> warnings);
+                out var resultConfig,
+                out var warnings);
 
             Assert.True(fetchedConfigSuccess);
             Assert.NotNull(resultConfig);
@@ -342,33 +342,33 @@ public class CliObjectListTest
     {
         return new List<TableModel>()
         {
-            new TableModel("Users", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()
+            new("Users", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()
             {
-                new ColumnModel("UserId", "", true, false),
-                new ColumnModel("AccountId", "", false, true),
-                new ColumnModel("Name", "", false, false),
-                new ColumnModel("Email", "", false, false),
+                new("UserId", "", true, false),
+                new("AccountId", "", false, true),
+                new("Name", "", false, false),
+                new("Email", "", false, false),
 
             }),
-            new TableModel("Accounts", "other", databaseType, ObjectType.Table, new List<ColumnModel>()),
-            new TableModel("Extras", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-            new TableModel("Actors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-            new TableModel("Directors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-            new TableModel("TestFunction", "dbo", databaseType, ObjectType.ScalarFunction, new List<ColumnModel>()
+            new("Accounts", "other", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Extras", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Actors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Directors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("TestFunction", "dbo", databaseType, ObjectType.ScalarFunction, new List<ColumnModel>()
             {
-                new ColumnModel("ColumnA", "", false, false),
-                new ColumnModel("ColumnB", "", false, false)
+                new("ColumnA", "", false, false),
+                new("ColumnB", "", false, false)
             }),
-            new TableModel("TestProcedure", "dbo", databaseType, ObjectType.Procedure, new List<ColumnModel>()
+            new("TestProcedure", "dbo", databaseType, ObjectType.Procedure, new List<ColumnModel>()
             {
-                new ColumnModel("ColumnA", "", false, false),
-                new ColumnModel("ColumnB", "", false, false)
+                new("ColumnA", "", false, false),
+                new("ColumnB", "", false, false)
             }),
-            new TableModel("UsersView", "dbo", databaseType, ObjectType.View, new List<ColumnModel>()
+            new("UsersView", "dbo", databaseType, ObjectType.View, new List<ColumnModel>()
             {
-                new ColumnModel("UserId", "", true, false),
-                new ColumnModel("AccountId", "", false, true),
-                new ColumnModel("Name", "", false, false)
+                new("UserId", "", true, false),
+                new("AccountId", "", false, true),
+                new("Name", "", false, false)
             })
         };
     }
@@ -386,46 +386,41 @@ public class CliObjectListTest
 
     private string TestPath(string file)
     {
-        return System.IO.Path.Combine(cliTestDirectory, file);
+        return Path.Combine(cliTestDirectory, file);
     }
 
     private CliConfig GetConfig()
     {
         var config = new CliConfig
         {
-            Tables = new System.Collections.Generic.List<Table>
+            Tables = new List<Table>
             {
-                new Table
-                {
+                new() {
                     Name = "[dbo].[Users]",
                 },
-                new Table
-                {
+                new() {
                     Name = "[other].[Accounts]",
                 },
-                new Table
-                {
+                new() {
                     Name = "[dbo].[Extras]",
                 },
-                new Table
-                {
+                new() {
                     Name = "[dbo].[Actors]",
                 },
-                new Table
-                {
+                new() {
                     Name = "[dbo].[Directors]",
                 },
             },
             Views = new List<View>()
             {
-                new View()
+                new()
                 {
                     Name = "[dbo].[UsersView]"
                 }
             },
             StoredProcedures = new List<StoredProcedure>()
             {
-                new StoredProcedure()
+                new()
                 {
                     Name = "TestProcedure",
                     UseLegacyResultsetDiscovery = true,

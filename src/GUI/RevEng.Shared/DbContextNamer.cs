@@ -13,7 +13,7 @@ public static class DbContextNamer
             throw new ArgumentNullException(nameof(connectionString));
         }
 
-        if (connectionString.EndsWith(".dacpac", System.StringComparison.OrdinalIgnoreCase))
+        if (connectionString.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase))
         {
             return Path.GetFileNameWithoutExtension(connectionString);
         }

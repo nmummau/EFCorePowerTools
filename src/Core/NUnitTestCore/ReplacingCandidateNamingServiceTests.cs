@@ -16,8 +16,7 @@ public class ReplacingCandidateNamingServiceTests
         var expected = "MachineAlertUi";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
               },
@@ -45,14 +44,12 @@ public class ReplacingCandidateNamingServiceTests
         var expected = "PetGuineaPig";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "pet",
                    UseSchemaName = true,
                    Tables = new List<TableRenamer>
                    {
-                        new TableRenamer
-                        {
+                        new() {
                             Name = "GUINEAPig",
                             NewName = "GuineaPig",
                         },
@@ -82,13 +79,11 @@ public class ReplacingCandidateNamingServiceTests
         var expected = "MachineAlertUi";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "master",
                    UseSchemaName = true,
               },
@@ -119,21 +114,18 @@ public class ReplacingCandidateNamingServiceTests
         var expected4 = "DboWorkType";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "master",
                    UseSchemaName = true,
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "dbo",
                    UseSchemaName = true,
-                   Tables = new List<TableRenamer> { new TableRenamer { Name = "work_type" } },
+                   Tables = new List<TableRenamer> { new() { Name = "work_type" } },
               },
           };
 
@@ -141,30 +133,26 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleDbTables = new List<DatabaseTable>
         {
-            new DatabaseTable
-            {
+            new() {
                 Name = "alert_ui",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "measure",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "measure",
                 Schema = "master",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "work_type",
                 Schema = "dbo",
             },
         };
 
         // Act
-        List<string> results = new List<string>();
+        var results = new List<string>();
         foreach (var table in exampleDbTables)
         {
             results.Add(sut.GenerateCandidateIdentifier(table));
@@ -183,26 +171,23 @@ public class ReplacingCandidateNamingServiceTests
         // Arrange
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "stg",
                    UseSchemaName = false,
                    Tables = new List<TableRenamer>
                    {
-                       new TableRenamer
-                       {
+                       new() {
                            Name = "Jobs",
                            NewName = "stg_Jobs",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                  Name = "JobName",
                                  NewName = "JobRename",
                                },
                            },
                        },
-                       new TableRenamer { Name = "DeliveryAddress", NewName = "stg_DeliveryAddress" },
+                       new() { Name = "DeliveryAddress", NewName = "stg_DeliveryAddress" },
                    },
               },
           };
@@ -211,13 +196,11 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleDbTables = new List<DatabaseTable>
         {
-            new DatabaseTable
-            {
+            new() {
                 Name = "DeliveryAddress",
                 Schema = "stg",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "Jobs",
                 Schema = "stg",
             },
@@ -246,18 +229,15 @@ public class ReplacingCandidateNamingServiceTests
         var expected5 = "DifferentTable";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "master",
                    UseSchemaName = true,
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "dbo",
                    UseSchemaName = false,
               },
@@ -267,35 +247,30 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleDbTables = new List<DatabaseTable>
         {
-            new DatabaseTable
-            {
+            new() {
                 Name = "alert_ui",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "measure",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "measure",
                 Schema = "master",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "work_cell",
                 Schema = "dbo",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "different_table",
                 Schema = "other",
             },
         };
 
         // Act
-        List<string> results = new List<string>();
+        var results = new List<string>();
         foreach (var table in exampleDbTables)
         {
             results.Add(sut.GenerateCandidateIdentifier(table));
@@ -316,13 +291,11 @@ public class ReplacingCandidateNamingServiceTests
         var expected = "new_name_of_the_table";
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                  SchemaName = "machine",
                  Tables = new List<TableRenamer>
                  {
-                    new TableRenamer
-                    {
+                    new() {
                         NewName = "new_name_of_the_table",
                         Name = "OldTableName",
                     },
@@ -355,13 +328,11 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
         {
-            new Schema
-            {
+            new() {
                 SchemaName = "machine",
                 Tables = new List<TableRenamer>
                 {
-                    new TableRenamer
-                    {
+                    new() {
                         NewName = "new_name_of_the_table",
                         Name = "OldTableName",
                     },
@@ -373,18 +344,15 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleDbTables = new List<DatabaseTable>
         {
-            new DatabaseTable
-            {
+            new() {
                 Name = "OldTableName",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "alert_ui",
                 Schema = "machine",
             },
-            new DatabaseTable
-            {
+            new() {
                 Name = "WorkType",
                 Schema = "dbo",
             },
@@ -422,19 +390,16 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
                    Tables = new List<TableRenamer>
                    {
-                      new TableRenamer
-                      {
+                      new() {
                            Name = "table_name",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                     Name = "OldDummyColumnName",
                                     NewName = "NewDummyColumnName",
                                },
@@ -471,19 +436,16 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
                    Tables = new List<TableRenamer>
                    {
-                      new TableRenamer
-                      {
+                      new() {
                            Name = "table_name",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                     Name = "OldDummyColumnName",
                                     NewName = "NewDummyColumnName",
                                },
@@ -508,8 +470,7 @@ public class ReplacingCandidateNamingServiceTests
         // Arrange
         var exampleColumns = new List<DatabaseColumn>
         {
-            new DatabaseColumn
-            {
+            new() {
                 Name = "column_name_to_rename",
                 Table = new DatabaseTable
                 {
@@ -517,8 +478,7 @@ public class ReplacingCandidateNamingServiceTests
                     Schema = "dbo",
                 },
             },
-            new DatabaseColumn
-            {
+            new() {
                 Name = "measure",
                 Table = new DatabaseTable
                 {
@@ -533,19 +493,16 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "machine",
                    UseSchemaName = true,
                    Tables = new List<TableRenamer>
                    {
-                      new TableRenamer
-                      {
+                      new() {
                            Name = "table_name",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                     Name = "OldDummyColumnName",
                                     NewName = "NewDummyColumnName",
                                },
@@ -553,19 +510,16 @@ public class ReplacingCandidateNamingServiceTests
                       },
                    },
               },
-              new Schema
-              {
+              new() {
                    SchemaName = "dbo",
                    UseSchemaName = false,
                    Tables = new List<TableRenamer>
                    {
-                      new TableRenamer
-                      {
+                      new() {
                            Name = "table_name",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                     Name = "column_name_to_rename",
                                     NewName = "SomethingCustom",
                                },
@@ -601,8 +555,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^Old",
                   TablePatternReplaceWith = "New",
@@ -635,8 +588,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^PREFIX_",
                   TablePatternReplaceWith = "",
@@ -668,8 +620,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^tbl",
                   TablePatternReplaceWith = "",
@@ -701,8 +652,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^tbl",
                   TablePatternReplaceWith = "",
@@ -732,8 +682,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^PREFIX_",
                   TablePatternReplaceWith = "",
@@ -741,13 +690,11 @@ public class ReplacingCandidateNamingServiceTests
                   ColumnRegexPattern = "PREFIX_",
                   Tables = new List<TableRenamer>
                   {
-                      new TableRenamer
-                      {
+                      new() {
                         Name = "whatever",
                         Columns = new List<ColumnNamer>
                         {
-                            new ColumnNamer
-                            {
+                            new() {
                                 Name = "PREFIX_APPLE_NAME",
                                 NewName = "AppleName",
                             },
@@ -784,8 +731,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^PREFIX_",
                   TablePatternReplaceWith = "",
@@ -821,8 +767,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^tbl",
                   TablePatternReplaceWith = "",
@@ -862,20 +807,17 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   ColumnPatternReplaceWith = "$0",
                   ColumnRegexPattern = "^.+$",
                   Tables = new List<TableRenamer>
                   {
-                      new TableRenamer
-                      {
+                      new() {
                         Name = "Users",
                         Columns = new List<ColumnNamer>
                         {
-                            new ColumnNamer
-                            {
+                            new() {
                                 Name = "UserID",
                                 NewName = "UserID",
                             },
@@ -915,15 +857,13 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                   SchemaName = "dbo",
                   TableRegexPattern = "^Old",
                   TablePatternReplaceWith = "New",
                   Tables = new List<TableRenamer>
                    {
-                       new TableRenamer
-                       {
+                       new() {
                            NewName = "TableNameNotOverwritten",
                            Name = "OldTableName",
                        },
@@ -967,8 +907,7 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "dbo",
                    UseSchemaName = true,
                    ColumnRegexPattern = "^Old",
@@ -1006,21 +945,18 @@ public class ReplacingCandidateNamingServiceTests
 
         var exampleOption = new List<Schema>
           {
-              new Schema
-              {
+              new() {
                    SchemaName = "dbo",
                    UseSchemaName = true,
                    ColumnRegexPattern = "^Old",
                    ColumnPatternReplaceWith = "New",
                    Tables = new List<TableRenamer>
                    {
-                      new TableRenamer
-                      {
+                      new() {
                            Name = "table_name",
                            Columns = new List<ColumnNamer>
                            {
-                               new ColumnNamer
-                               {
+                               new() {
                                     Name = "OldColumnName",
                                     NewName = "ColumnNameNotOverwritten",
                                },

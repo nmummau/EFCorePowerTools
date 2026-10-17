@@ -271,8 +271,7 @@ GO
         // Assert
         Assert.Single(dbModel.Tables);
         Assert.Equal(
-            new[]
-            {
+            [
                 "OrderDate",
                 "Freight1",
                 "Freight2",
@@ -282,7 +281,7 @@ GO
                 "Freight6",
                 "Freight7",
                 "Freight8",
-            },
+            ],
             dbModel.Tables.Single().Columns
                 .Where(c => c.DefaultValueSql != null)
                 .Select(c => c.Name));
@@ -525,8 +524,8 @@ GO
         var table = dbModel.Tables.Single(t => t.Schema == "support" && t.Name == "MessageFault");
         var index = table.Indexes.Single(i => i.Name == "IX_support_MessageFault_MessageFaultStatusCode_FaultedTimestamp");
 
-        Assert.Equal(new[] { "MessageFaultStatusCode", "FaultedTimestamp" }, index.Columns.Select(c => c.Name));
-        Assert.Equal(new[] { false, true }, index.IsDescending);
+        Assert.Equal(["MessageFaultStatusCode", "FaultedTimestamp"], index.Columns.Select(c => c.Name));
+        Assert.Equal([false, true], index.IsDescending);
     }
 
     [Fact]
@@ -634,10 +633,10 @@ GO
         Assert.True(dbModel.Routines[0].Parameters[0].TvpColumns.Count > 0);
 
         // Debug - print TVP columns
-        System.Console.WriteLine($"TVP Columns count: {dbModel.Routines[0].Parameters[0].TvpColumns.Count}");
+        Console.WriteLine($"TVP Columns count: {dbModel.Routines[0].Parameters[0].TvpColumns.Count}");
         foreach (var col in dbModel.Routines[0].Parameters[0].TvpColumns)
         {
-            System.Console.WriteLine($"  Column: {col.Name}, Type: {col.StoreType}");
+            Console.WriteLine($"  Column: {col.Name}, Type: {col.StoreType}");
         }
     }
 
@@ -662,8 +661,8 @@ GO
         Assert.Single(singleResultRoutine.Results);
         Assert.Equal(4, multipleResultRoutine.Results.Count);
 
-        Assert.Equal(new[] { "JobCandidateID", "RANK" }, multipleResultRoutine.Results[0].Select(c => c.Name));
-        Assert.Equal(new[] { "JobCandidateID", "RANK" }, multipleResultRoutine.Results[1].Select(c => c.Name));
+        Assert.Equal(["JobCandidateID", "RANK"], multipleResultRoutine.Results[0].Select(c => c.Name));
+        Assert.Equal(["JobCandidateID", "RANK"], multipleResultRoutine.Results[1].Select(c => c.Name));
     }
 
     private static string BuildDacpac(params string[] sqlScripts)

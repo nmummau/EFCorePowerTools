@@ -119,7 +119,7 @@ public class ReverseEngineerRunnerCleanupTests
         {
             var method = typeof(ReverseEngineerRunner).GetMethod("PostProcess", BindingFlags.NonPublic | BindingFlags.Static);
             Assert.NotNull(method);
-            method.Invoke(null, new object[] { codeFile, useNullable, new GeneratedFileFormat(lineEndingStyle, null) });
+            method.Invoke(null, [codeFile, useNullable, new GeneratedFileFormat(lineEndingStyle, null)]);
 
             var lineEnding = lineEndingStyle switch
             {

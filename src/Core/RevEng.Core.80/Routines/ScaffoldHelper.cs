@@ -15,7 +15,7 @@ namespace RevEng.Core.Routines;
 
 internal static class ScaffoldHelper
 {
-    private static readonly HashSet<string> KeyWords = new HashSet<string>
+    private static readonly HashSet<string> KeyWords = new()
     {
         "abstract",
         "as",

@@ -29,7 +29,7 @@ public static class PostgresNpgsqlTypeExtensions
     ];
 
     private static readonly ReadOnlyDictionary<string, string> SqlTypeAliases
-    = new ReadOnlyDictionary<string, string>(
+    = new(
         new Dictionary<string, string>()
         {
             { "bool", "boolean" },
