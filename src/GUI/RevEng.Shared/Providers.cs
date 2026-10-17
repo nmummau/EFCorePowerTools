@@ -416,33 +416,33 @@ public static class Providers
 
     private static Dictionary<string, List<string>> GetProvidersWithAliases() => new()
     {
-            {
-                "Microsoft.EntityFrameworkCore.SqlServer",
-                new List<string> { "mssql", "sqlserver" }
-            },
-            {
-                "Microsoft.EntityFrameworkCore.Sqlite",
-                new List<string> { "sqlite" }
-            },
-            {
-                "Npgsql.EntityFrameworkCore.PostgreSQL",
-                new List<string> { "postgres", "postgresql" }
-            },
-            {
-                "Pomelo.EntityFrameworkCore.MySql",
-                new List<string> { "mysql" }
-            },
-            {
-                "Oracle.EntityFrameworkCore",
-                new List<string> { "oracle" }
-            },
-            {
-                "FirebirdSql.EntityFrameworkCore.Firebird",
-                new List<string> { "firebird" }
-            },
-            {
-                "EFCore.Snowflake",
-                new List<string> { "snowflake" }
-            },
-        };
+        {
+            "Microsoft.EntityFrameworkCore.SqlServer",
+            new List<string> { "mssql", "sqlserver" }
+        },
+        {
+            "Microsoft.EntityFrameworkCore.Sqlite",
+            new List<string> { "sqlite" }
+        },
+        {
+            "Npgsql.EntityFrameworkCore.PostgreSQL",
+            new List<string> { "postgres", "postgresql" }
+        },
+        {
+            "Pomelo.EntityFrameworkCore.MySql",
+            new List<string> { "mysql" }
+        },
+        {
+            "Oracle.EntityFrameworkCore",
+            new List<string> { "oracle" }
+        },
+        {
+            "FirebirdSql.EntityFrameworkCore.Firebird",
+            new List<string> { "firebird" }
+        },
+        {
+            "EFCore.Snowflake",
+            new List<string> { "snowflake" }
+        },
+    };
 }
