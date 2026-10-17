@@ -3,57 +3,56 @@ using EFCorePowerTools.Handlers.ReverseEngineer;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-namespace UnitTests
+namespace UnitTests;
+
+[TestFixture]
+public class ResultDeserializerTest
 {
-    [TestFixture]
-    public class ResultDeserializerTest
+    [Test]
+    [Ignore("Investigate build fail")]
+    public void ParseTableResult()
     {
-        [Test]
-        [Ignore("Investigate build fail")]
-        public void ParseTableResult()
-        {
-            // Arrange
-            var result = ReadAllText("TableResult2.txt");
+        // Arrange
+        var result = ReadAllText("TableResult2.txt");
 
-            // Act
-            var parsed = ResultDeserializer.BuildTableResult(result);
+        // Act
+        var parsed = ResultDeserializer.BuildTableResult(result);
 
-            // Assert
-            ClassicAssert.IsNotNull(parsed);
-            ClassicAssert.AreEqual(29, parsed.Count);
-        }
+        // Assert
+        ClassicAssert.IsNotNull(parsed);
+        ClassicAssert.AreEqual(29, parsed.Count);
+    }
 
-        [Test]
-        [Ignore("Investigate build fail")]
-        public void ParseTableResultWithWarning()
-        {
-            // Arrange
-            var result = ReadAllText("TableResult1.txt");
+    [Test]
+    [Ignore("Investigate build fail")]
+    public void ParseTableResultWithWarning()
+    {
+        // Arrange
+        var result = ReadAllText("TableResult1.txt");
 
-            // Act
-            var parsed = ResultDeserializer.BuildTableResult(result);
+        // Act
+        var parsed = ResultDeserializer.BuildTableResult(result);
 
-            // Assert
-            ClassicAssert.IsNotNull(parsed);
-            ClassicAssert.AreEqual(29, parsed.Count);
-        }
+        // Assert
+        ClassicAssert.IsNotNull(parsed);
+        ClassicAssert.AreEqual(29, parsed.Count);
+    }
 
-        [Test]
-        [Ignore("Investigate build issue")]
-        public void ParseResultWithError()
-        {
-            // Arrange
-            var result = ReadAllText("ErrorResult.txt");
+    [Test]
+    [Ignore("Investigate build issue")]
+    public void ParseResultWithError()
+    {
+        // Arrange
+        var result = ReadAllText("ErrorResult.txt");
 
-            // Act
-            ResultDeserializer.BuildResult(result);
+        // Act
+        ResultDeserializer.BuildResult(result);
 
-            // Assert
-        }
+        // Assert
+    }
 
-        private static string ReadAllText(string file)
-        {
-            return File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, file));
-        }
+    private static string ReadAllText(string file)
+    {
+        return File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, file));
     }
 }
