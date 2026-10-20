@@ -4,7 +4,7 @@ namespace EFCorePowerTools.Contracts.Wizard;
 
 public interface IWizardView
 {
-    void WizardReturnInvoke(object sender, WizardReturnEventArgs e);
+    public void WizardReturnInvoke(object sender, WizardReturnEventArgs e);
 
-    bool? ShowDialog();
+    public bool? ShowDialog();
 }

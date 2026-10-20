@@ -5,9 +5,9 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IPickTablesDialog : IDialog<PickTablesDialogResult>
 {
-    IPickTablesDialog AddTables(IEnumerable<TableModel> tables, IEnumerable<Schema> customReplacers);
+    public IPickTablesDialog AddTables(IEnumerable<TableModel> tables, IEnumerable<Schema> customReplacers);
 
-    IPickTablesDialog PreselectTables(IEnumerable<SerializationTableModel> tables);
+    public IPickTablesDialog PreselectTables(IEnumerable<SerializationTableModel> tables);
 
-    IPickTablesDialog SqliteToolboxInstall(bool installed);
+    public IPickTablesDialog SqliteToolboxInstall(bool installed);
 }

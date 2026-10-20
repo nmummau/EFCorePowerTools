@@ -5,5 +5,5 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IPickSchemasDialog : IDialog<SchemaInfo[]>
 {
-    void AddSchemas(IEnumerable<SchemaInfo> schemas);
+    public void AddSchemas(IEnumerable<SchemaInfo> schemas);
 }

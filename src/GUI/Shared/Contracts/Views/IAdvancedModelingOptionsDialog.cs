@@ -4,5 +4,5 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IAdvancedModelingOptionsDialog : IDialog<ModelingOptionsModel>
 {
-    IAdvancedModelingOptionsDialog ApplyPresets(ModelingOptionsModel presets);
+    public IAdvancedModelingOptionsDialog ApplyPresets(ModelingOptionsModel presets);
 }

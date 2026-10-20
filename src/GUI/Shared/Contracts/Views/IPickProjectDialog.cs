@@ -5,5 +5,5 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IPickProjectDialog : IDialog<ProjectModel>
 {
-    void PublishProjects(IEnumerable<ProjectModel> projects);
+    public void PublishProjects(IEnumerable<ProjectModel> projects);
 }
