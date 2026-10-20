@@ -200,7 +200,7 @@ order by schema_name,
 
                     if (name.Length >= 2 && name.StartsWith('"') && name.EndsWith('"'))
                     {
-                        name = name.Substring(1, name.Length - 2);
+                        name = name[1..^1];
                     }
 
                     list.Add(new ModuleResultElement
@@ -225,7 +225,7 @@ order by schema_name,
 
                         if (name.Length >= 2 && name.StartsWith('"') && name.EndsWith('"'))
                         {
-                            name = name.Substring(1, name.Length - 2);
+                            name = name[1..^1];
                         }
 
                         list.Add(new ModuleResultElement

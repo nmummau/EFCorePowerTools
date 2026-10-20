@@ -20,6 +20,7 @@ public class ColumnRemovingScaffoldingModelFactory : RelationalScaffoldingModelF
     private readonly DatabaseType databaseType;
     private readonly bool ignoreManyToMany;
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the constructor signature used by existing callers and service registrations.")]
     public ColumnRemovingScaffoldingModelFactory([NotNull] IOperationReporter reporter, [NotNull] ICandidateNamingService candidateNamingService, [NotNull] IPluralizer pluralizer, [NotNull] ICSharpUtilities cSharpUtilities, [NotNull] IScaffoldingTypeMapper scaffoldingTypeMapper, [NotNull] LoggingDefinitions loggingDefinitions, [NotNull] IModelRuntimeInitializer modelRuntimeInitializer, List<SerializationTableModel> tables, DatabaseType databaseType, bool ignoreManyToMany)
         : base(reporter, candidateNamingService, pluralizer, cSharpUtilities, scaffoldingTypeMapper, modelRuntimeInitializer)
     {
@@ -58,7 +59,7 @@ public class ColumnRemovingScaffoldingModelFactory : RelationalScaffoldingModelF
         var tableDefinition = tables.Find(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (tableDefinition?.ExcludedColumns != null)
         {
-            foreach (var column in tableDefinition.ExcludedColumns!)
+            foreach (var column in tableDefinition.ExcludedColumns)
             {
                 var columnToRemove = table.Columns.FirstOrDefault(c => c.Name.Equals(column, StringComparison.OrdinalIgnoreCase));
                 if (columnToRemove != null)

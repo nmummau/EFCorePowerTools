@@ -17,7 +17,7 @@ internal sealed class DatabaseModelToDgml
 
     public void CreateDgml()
     {
-        using var dgmlHelper = new DgmlHelper(this.fileName);
+        using var dgmlHelper = new DgmlHelper(fileName);
         dgmlHelper.BeginElement("Nodes");
 
         dgmlHelper.WriteNode("Database", databaseModel.DatabaseName, null, "Database", "Expanded", null);

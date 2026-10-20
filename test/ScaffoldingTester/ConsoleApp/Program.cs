@@ -1,17 +1,16 @@
-﻿using ConsoleApp.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using ConsoleApp.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace ConsoleApp
+namespace ConsoleApp;
+
+internal static class Program
 {
-    class Program
+    private static void Main()
     {
-        static void Main(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ChinookContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<ChinookContext>();
 
-            using var db = new ChinookContext(optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Chinook;Integrated Security=True", x => x.UseNetTopologySuite()).Options);
-            var result = db.Customers.ToList();
-        }
+        using var db = new ChinookContext(optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Chinook;Integrated Security=True", x => x.UseNetTopologySuite()).Options);
+        var result = db.Customers.ToList();
     }
 }

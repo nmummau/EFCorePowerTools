@@ -8,165 +8,164 @@ using EFCorePowerTools.Extensions;
 using Microsoft.VisualStudio.Shell;
 using RevEng.Common;
 
-namespace EFCorePowerTools.Helpers
+namespace EFCorePowerTools.Helpers;
+
+public static class SqlProjHelper
 {
-    public static class SqlProjHelper
+    public static string SetRelativePathForSqlProj(string uiHint, string projectDirectory)
     {
-        public static string SetRelativePathForSqlProj(string uiHint, string projectDirectory)
+        if (Path.IsPathRooted(uiHint))
         {
-            if (Path.IsPathRooted(uiHint))
-            {
-                uiHint = PathExtensions.GetRelativePath(projectDirectory, uiHint);
-            }
+            uiHint = PathExtensions.GetRelativePath(projectDirectory, uiHint);
+        }
 
-            if (Path.IsPathRooted(uiHint))
-            {
-                return null;
-            }
+        if (Path.IsPathRooted(uiHint))
+        {
+            return null;
+        }
 
+        return uiHint;
+    }
+
+    public static string GetFullPathForSqlProj(string uiHint, string projectDirectory)
+    {
+        if (string.IsNullOrEmpty(projectDirectory))
+        {
             return uiHint;
         }
 
-        public static string GetFullPathForSqlProj(string uiHint, string projectDirectory)
+        if (uiHint.EndsWith(".sqlproj", StringComparison.OrdinalIgnoreCase)
+            || uiHint.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)
+            || uiHint.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase))
         {
-            if (string.IsNullOrEmpty(projectDirectory))
-            {
-                return uiHint;
-            }
-
-            if (uiHint.EndsWith(".sqlproj", StringComparison.OrdinalIgnoreCase)
-                || uiHint.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)
-                || uiHint.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase))
-            {
-                return PathHelper.GetAbsPath(uiHint, projectDirectory);
-            }
-
-            return uiHint;
+            return PathHelper.GetAbsPath(uiHint, projectDirectory);
         }
 
-        public static async Task<string[]> GetDacpacProjectsInActiveSolutionAsync()
+        return uiHint;
+    }
+
+    public static async Task<string[]> GetDacpacProjectsInActiveSolutionAsync()
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+        var result = new HashSet<string>();
+
+        var projects = await VS.Solutions.GetAllProjectsAsync();
+
+        foreach (var item in projects)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var result = new HashSet<string>();
-
-            var projects = await VS.Solutions.GetAllProjectsAsync();
-
-            foreach (var item in projects)
+            var folder = Path.GetDirectoryName(item.FullPath);
+            if (!Directory.Exists(folder))
             {
-                var folder = Path.GetDirectoryName(item.FullPath);
-                if (!Directory.Exists(folder))
-                {
-                    continue;
-                }
-
-                if (await item.IsSqlDatabaseProjectAsync())
-                {
-                    result.Add(item.FullPath);
-                    continue;
-                }
-
-                try
-                {
-                    await AddLinkedFilesAsync(result, item);
-                }
-                catch
-                {
-                    // Ignore
-                }
+                continue;
             }
 
-            if (result.Count == 0)
+            if (await item.IsSqlDatabaseProjectAsync())
             {
-                return null;
+                result.Add(item.FullPath);
+                continue;
             }
 
-            return result
-                .Where(s => s.EndsWith(".sqlproj", StringComparison.OrdinalIgnoreCase))
-                .Concat(result.Where(s => s.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)))
-                .Concat(result.Where(s => s.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase)))
-                .ToArray();
-        }
-
-        public static async Task<string> BuildSqlProjectAsync(string sqlprojPath, bool mustBuild = true)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            if (sqlprojPath.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                return sqlprojPath;
+                await AddLinkedFilesAsync(result, item);
             }
-
-            var project = await GetProjectAsync(sqlprojPath);
-            if (project == null)
+            catch
             {
-                return null;
-            }
-
-            if (mustBuild && !await VS.Build.ProjectIsUpToDateAsync(project))
-            {
-                var ok = await VS.Build.BuildProjectAsync(project, BuildAction.Build);
-
-                if (!ok)
-                {
-                    throw new InvalidOperationException("Dacpac build failed");
-                }
-            }
-
-            var dacpacPath = await project.GetDacpacPathAsync();
-
-            if (!string.IsNullOrEmpty(dacpacPath))
-            {
-                return dacpacPath;
-            }
-
-            throw new InvalidOperationException("Dacpac build failed, please pick the file manually");
-        }
-
-        private static async System.Threading.Tasks.Task LinkedFilesSearchAsync(IEnumerable<SolutionItem> projectItems, HashSet<string> files)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            foreach (var item in projectItems)
-            {
-                if (item.Children.Any())
-                {
-                    await LinkedFilesSearchAsync(item.Children, files);
-                }
-
-                if (item.Type == SolutionItemType.PhysicalFile)
-                {
-                    var file = item as PhysicalFile;
-                    var fullPath = file.Parent?.FullPath;
-
-                    if (file.Extension == ".dacpac"
-                        && !string.IsNullOrEmpty(fullPath)
-                        && !string.IsNullOrEmpty(file.FullPath)
-                        && !fullPath.StartsWith(Path.GetDirectoryName(file.FullPath), StringComparison.OrdinalIgnoreCase))
-                    {
-                        files.Add(file.FullPath);
-                    }
-                }
+                // Ignore
             }
         }
 
-        private static async System.Threading.Tasks.Task AddLinkedFilesAsync(HashSet<string> result, Project project)
+        if (result.Count == 0)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            if (project.Children == null)
+            return null;
+        }
+
+        return result
+            .Where(s => s.EndsWith(".sqlproj", StringComparison.OrdinalIgnoreCase))
+            .Concat(result.Where(s => s.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)))
+            .Concat(result.Where(s => s.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase)))
+            .ToArray();
+    }
+
+    public static async Task<string> BuildSqlProjectAsync(string sqlprojPath, bool mustBuild = true)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+        if (sqlprojPath.EndsWith(".dacpac", StringComparison.OrdinalIgnoreCase))
+        {
+            return sqlprojPath;
+        }
+
+        var project = await GetProjectAsync(sqlprojPath);
+        if (project == null)
+        {
+            return null;
+        }
+
+        if (mustBuild && !await VS.Build.ProjectIsUpToDateAsync(project))
+        {
+            var ok = await VS.Build.BuildProjectAsync(project, BuildAction.Build);
+
+            if (!ok)
             {
-                return;
+                throw new InvalidOperationException("Dacpac build failed");
+            }
+        }
+
+        var dacpacPath = await project.GetDacpacPathAsync();
+
+        if (!string.IsNullOrEmpty(dacpacPath))
+        {
+            return dacpacPath;
+        }
+
+        throw new InvalidOperationException("Dacpac build failed, please pick the file manually");
+    }
+
+    private static async System.Threading.Tasks.Task LinkedFilesSearchAsync(IEnumerable<SolutionItem> projectItems, HashSet<string> files)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+        foreach (var item in projectItems)
+        {
+            if (item.Children.Any())
+            {
+                await LinkedFilesSearchAsync(item.Children, files);
             }
 
-            await LinkedFilesSearchAsync(project.Children, result);
-        }
+            if (item.Type == SolutionItemType.PhysicalFile)
+            {
+                var file = item as PhysicalFile;
+                var fullPath = file.Parent?.FullPath;
 
-        private static async Task<Project> GetProjectAsync(string projectItemPath)
+                if (file.Extension == ".dacpac"
+                    && !string.IsNullOrEmpty(fullPath)
+                    && !string.IsNullOrEmpty(file.FullPath)
+                    && !fullPath.StartsWith(Path.GetDirectoryName(file.FullPath), StringComparison.OrdinalIgnoreCase))
+                {
+                    files.Add(file.FullPath);
+                }
+            }
+        }
+    }
+
+    private static async System.Threading.Tasks.Task AddLinkedFilesAsync(HashSet<string> result, Project project)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        if (project.Children == null)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            return (await VS.Solutions.GetAllProjectsAsync())
-                .SingleOrDefault(p => p.FullPath == projectItemPath);
+            return;
         }
+
+        await LinkedFilesSearchAsync(project.Children, result);
+    }
+
+    private static async Task<Project> GetProjectAsync(string projectItemPath)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+        return (await VS.Solutions.GetAllProjectsAsync())
+            .SingleOrDefault(p => p.FullPath == projectItemPath);
     }
 }

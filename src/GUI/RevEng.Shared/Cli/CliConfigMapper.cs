@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -134,6 +135,7 @@ public static class CliConfigMapper
         return options;
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; configuration mapping is independent of the EF Core version.")]
     public static bool TryGetCliConfig(string fullPath, string connectionString, DatabaseType databaseType, List<TableModel> objects, CodeGenerationMode codeGenerationMode, out CliConfig config, out List<string> warnings)
     {
         var cliConfigExists = fullPath != null && File.Exists(fullPath);
@@ -243,7 +245,7 @@ public static class CliConfigMapper
 
         var filters = GetFilters(entities);
 
-        var serializationTableModels = entities.Where<T>(entity => ExclusionFilter(entity, excludeAll, filters)
+        var serializationTableModels = entities.Where(entity => ExclusionFilter(entity, excludeAll, filters)
             && !string.IsNullOrEmpty(entity.Name))
             .Select(entity =>
             {
@@ -264,8 +266,8 @@ public static class CliConfigMapper
         if (typeof(T) == typeof(Table)
             && !serializationTableModels.Any())
         {
-                // No tables selected, so add a dummy table in order to generate an empty DbContext
-                serializationTableModels.Add(new SerializationTableModel($"Dummy_{new Guid("9A016951-3470-4926-A7B2-58392A3F8CF3")}", ObjectType.Table, null, null));
+            // No tables selected, so add a dummy table in order to generate an empty DbContext
+            serializationTableModels.Add(new SerializationTableModel($"Dummy_{new Guid("9A016951-3470-4926-A7B2-58392A3F8CF3")}", ObjectType.Table, null, null));
         }
 
         if (typeof(T) == typeof(StoredProcedure))
@@ -406,9 +408,9 @@ public static class CliConfigMapper
         var instance = new T();
         var objectType = instance switch
         {
-            View _ => ObjectType.View,
-            Function _ => ObjectType.ScalarFunction,
-            StoredProcedure _ => ObjectType.Procedure,
+            View => ObjectType.View,
+            Function => ObjectType.ScalarFunction,
+            StoredProcedure => ObjectType.Procedure,
             _ => ObjectType.Table,
         };
         return objectType;

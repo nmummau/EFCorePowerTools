@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //<copyright company="Microsoft">
 //
 //    The MIT License (MIT)
@@ -25,11 +25,12 @@
 //</copyright>
 //------------------------------------------------------------------------------
 using Microsoft.SqlServer.Dac.Model;
-namespace Microsoft.SqlServer.Dac.Extensions.Prototype
-{
 
-    public interface ISqlModelElementReference : ISqlModelElement
-    {
-        T GetMetadataProperty<T>(ModelPropertyClass property);
-    }
+namespace Microsoft.SqlServer.Dac.Extensions.Prototype;
+
+#pragma warning disable CA1716 // Preserve upstream public parameter names for callers using named arguments.
+public interface ISqlModelElementReference : ISqlModelElement
+{
+    public T GetMetadataProperty<T>(ModelPropertyClass property);
 }
+#pragma warning restore CA1716

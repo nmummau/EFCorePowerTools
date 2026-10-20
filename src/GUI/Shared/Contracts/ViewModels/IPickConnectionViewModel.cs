@@ -7,11 +7,11 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IPickConnectionViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    DatabaseConnectionModel DatabaseConnection { get; }
+    public DatabaseConnectionModel DatabaseConnection { get; }
 }

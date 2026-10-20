@@ -55,7 +55,7 @@ public class DatabaseModelToMermaid
                 }
 
                 var nullable = column.IsNullable ? "(NULL)" : string.Empty;
-                sb.AppendLine(CultureInfo.InvariantCulture, $"    {formattedColumnName} {column.StoreType?.Replace(", ", "-", System.StringComparison.OrdinalIgnoreCase)}{nullable} {pkfk}");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"    {formattedColumnName} {column.StoreType?.Replace(", ", "-", StringComparison.OrdinalIgnoreCase)}{nullable} {pkfk}");
             }
 
             sb.AppendLine("  }");

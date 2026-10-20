@@ -5,11 +5,11 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IObjectTreeRootItemViewModel : IObjectTreeSelectableViewModel, IViewModel
 {
-    bool IsVisible { get; }
+    public bool IsVisible { get; }
 
-    ObservableCollection<ISchemaInformationViewModel> Schemas { get; }
+    public ObservableCollection<ISchemaInformationViewModel> Schemas { get; }
 
-    ObjectTypeIcon ObjectTypeIcon { get; }
+    public ObjectTypeIcon ObjectTypeIcon { get; }
 
-    ObjectType ObjectType { get; set; }
+    public ObjectType ObjectType { get; set; }
 }

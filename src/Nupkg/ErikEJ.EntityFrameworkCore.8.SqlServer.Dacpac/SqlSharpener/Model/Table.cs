@@ -19,8 +19,8 @@ public class Table
     public Table(string name, IEnumerable<Column> columns)
 #pragma warning restore S5766 // Serializable objects should validate data during deserialization
     {
-        this.Name = name;
-        this.Columns = columns ?? new List<Column>();
+        Name = name;
+        Columns = columns ?? new List<Column>();
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public class Table
         ArgumentNullException.ThrowIfNull(tSqlObject);
 
         // Get the name.
-        this.Name = tSqlObject.Name.Parts[tSqlObject.Name.Parts.Count - 1];
+        Name = tSqlObject.Name.Parts[tSqlObject.Name.Parts.Count - 1];
 
         // Get the columns
         var columns = new List<Column>();
@@ -45,7 +45,7 @@ public class Table
             columns.Add(column);
         }
 
-        this.Columns = columns;
+        Columns = columns;
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
-﻿namespace ScaffoldingTester.Models
+namespace ScaffoldingTester.Models;
+
+public class StringSplitResult
 {
-    public class StringSplitResult
-    {
-        public string Value { get; set; }
-    }
+    public string Value { get; set; }
 }

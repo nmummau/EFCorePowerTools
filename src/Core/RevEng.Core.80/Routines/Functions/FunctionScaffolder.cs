@@ -13,10 +13,6 @@ namespace RevEng.Core.Routines.Functions;
 
 public abstract class FunctionScaffolder : IRoutineScaffolder
 {
-#pragma warning disable SA1401 // Fields should be private
-    internal readonly ICSharpHelper Code;
-    internal IndentedStringBuilder Sb;
-#pragma warning restore SA1401 // Fields should be private
     private readonly Scaffolder scaffolder;
 
     protected FunctionScaffolder([System.Diagnostics.CodeAnalysis.NotNull] ICSharpHelper code, IClrTypeMapper typeMapper)
@@ -29,7 +25,11 @@ public abstract class FunctionScaffolder : IRoutineScaffolder
 
     public string FileNameSuffix { get; set; }
 
-    public SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, bool useInternalAccessModifier, bool useNullableReferences, GeneratedFileFormat fileFormat) => ScaffoldHelper.Save(scaffoldedModel, outputDir, nameSpaceValue, useAsyncCalls, fileFormat);
+    internal ICSharpHelper Code { get; }
+
+    internal IndentedStringBuilder Sb { get; set; }
+
+    public SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, bool useInternalAccessModifier, bool useNullableReferences, GeneratedFileFormat fileFormat) => ScaffoldHelper.Save(scaffoldedModel, outputDir, fileFormat);
 
     public ScaffoldedModel ScaffoldModel(RoutineModel model, ModuleScaffolderOptions scaffolderOptions, List<string> schemas, ref List<string> errors)
     {
@@ -43,9 +43,9 @@ public abstract class FunctionScaffolder : IRoutineScaffolder
 
         errors.AddRange(model.Errors);
 
-        schemas = schemas ?? new List<string>();
+        schemas ??= new List<string>();
 
-        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (!(r is Function f) || !f.IsScalar)))
+        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (r is not Function f || !f.IsScalar)))
         {
             var i = 1;
 

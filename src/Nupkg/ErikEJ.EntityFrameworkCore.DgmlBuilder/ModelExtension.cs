@@ -5,46 +5,45 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore
+namespace Microsoft.EntityFrameworkCore;
+
+public static class ModelExtension
 {
-    public static class ModelExtension
+    public static string AsDgml(this DbContext context)
     {
-        public static string AsDgml(this DbContext context)
-        {
 #pragma warning disable CA1510 // Use ArgumentNullException throw helper
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var type = context.GetType();
-
-            var debugView = CreateDebugView(context);
-            var dgml = Dgml.DgmlBuilder.Build(debugView, type.Name, GetTemplate());
-
-            return dgml;
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
         }
 
-        public static string AsSqlScript(this DbContext context)
+        var type = context.GetType();
+
+        var debugView = CreateDebugView(context);
+        var dgml = Dgml.DgmlBuilder.Build(debugView, type.Name, GetTemplate());
+
+        return dgml;
+    }
+
+    public static string AsSqlScript(this DbContext context)
+    {
+        if (context == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            throw new ArgumentNullException(nameof(context));
+        }
 
 #pragma warning restore CA1510 // Use ArgumentNullException throw helper
-            return context.Database.GenerateCreateScript();
-        }
+        return context.Database.GenerateCreateScript();
+    }
 
-        private static string CreateDebugView(DbContext context) => context.GetService<IDesignTimeModel>().Model.ToDebugString(MetadataDebugStringOptions.LongDefault);
+    private static string CreateDebugView(DbContext context) => context.GetService<IDesignTimeModel>().Model.ToDebugString(MetadataDebugStringOptions.LongDefault);
 
-        private static string GetTemplate()
-        {
-            var resourceName = "DgmlBuilder.template.dgml";
+    private static string GetTemplate()
+    {
+        var resourceName = "DgmlBuilder.template.dgml";
 
-            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-            using var reader = new StreamReader(stream ?? throw new InvalidOperationException());
-            return reader.ReadToEnd();
-        }
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        using var reader = new StreamReader(stream ?? throw new InvalidOperationException());
+        return reader.ReadToEnd();
     }
 }

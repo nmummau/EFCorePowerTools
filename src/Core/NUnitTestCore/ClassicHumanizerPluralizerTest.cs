@@ -1,26 +1,25 @@
-﻿using Xunit;
 using RevEng.Core;
+using Xunit;
 
-namespace UnitTests
+namespace UnitTests;
+
+public class ClassicHumanizerPluralizerTest
 {
-    public class ClassicHumanizerPluralizerTest
+    [Fact]
+    public void SingularizeUserData()
     {
-        [Fact]
-        public void SingularizeUserData()
-        {
-            var sut = new HumanizerPluralizer();
-            var result = sut.Singularize("UserData");
+        var sut = new HumanizerPluralizer();
+        var result = sut.Singularize("UserData");
 
-            Assert.Equal("UserDatum", result);
-        }
+        Assert.Equal("UserDatum", result);
+    }
 
-        [Fact]
-        public void PluralizeUserStatus()
-        {
-            var sut = new HumanizerPluralizer();
-            var result = sut.Pluralize("UserStatus");
+    [Fact]
+    public void PluralizeUserStatus()
+    {
+        var sut = new HumanizerPluralizer();
+        var result = sut.Pluralize("UserStatus");
 
-            Assert.Equal("UserStatuses", result);
-        }
+        Assert.Equal("UserStatuses", result);
     }
 }

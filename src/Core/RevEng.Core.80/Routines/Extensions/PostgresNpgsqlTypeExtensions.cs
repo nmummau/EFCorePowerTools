@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NpgsqlTypes;
 using RevEng.Core.Abstractions.Metadata;
@@ -29,7 +30,7 @@ public static class PostgresNpgsqlTypeExtensions
     ];
 
     private static readonly ReadOnlyDictionary<string, string> SqlTypeAliases
-    = new ReadOnlyDictionary<string, string>(
+    = new(
         new Dictionary<string, string>()
         {
             { "bool", "boolean" },
@@ -87,6 +88,7 @@ public static class PostgresNpgsqlTypeExtensions
         return GetClrType(moduleResultElement.StoreType, moduleResultElement.Nullable, moduleResultElement.Name);
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; PostgreSQL type mapping does not depend on parameter position.")]
     public static Type GetClrType(string storeType, bool isNullable, string objectName, bool asParameter = false)
     {
         var sqlType = GetNpgsqlDbType(storeType);
@@ -165,12 +167,7 @@ public static class PostgresNpgsqlTypeExtensions
             throw new ArgumentException("storeType not specified");
         }
 
-        var cleanedTypeName = RemoveMatchingBraces(storeType);
-
-        if (cleanedTypeName == null)
-        {
-            throw new ArgumentOutOfRangeException(nameof(storeType), $"Unable to remove braces: {storeType}");
-        }
+        var cleanedTypeName = RemoveMatchingBraces(storeType) ?? throw new ArgumentOutOfRangeException(nameof(storeType), $"Unable to remove braces: {storeType}");
 
 #pragma warning disable CA1308 // Normalize strings to uppercase
         if (SqlTypeAliases.TryGetValue(cleanedTypeName.ToLowerInvariant(), out var alias))
@@ -179,12 +176,9 @@ public static class PostgresNpgsqlTypeExtensions
         }
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
-        if (!Enum.TryParse(cleanedTypeName, true, out NpgsqlDbType result))
-        {
-            throw new ArgumentOutOfRangeException(nameof(storeType), $"cleanedTypeName: {cleanedTypeName}");
-        }
-
-        return result;
+        return !Enum.TryParse(cleanedTypeName, true, out NpgsqlDbType result)
+            ? throw new ArgumentOutOfRangeException(nameof(storeType), $"cleanedTypeName: {cleanedTypeName}")
+            : result;
     }
 
     private static string RemoveMatchingBraces(string s)

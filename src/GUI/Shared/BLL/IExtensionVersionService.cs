@@ -10,5 +10,5 @@ public interface IExtensionVersionService
     /// </summary>
     /// <param name="aboutExtensionModel">The model to update.</param>
     /// <exception cref="ArgumentNullException"><paramref name="aboutExtensionModel"/> is <b>null</b>.</exception>
-    void SetExtensionVersion(AboutExtensionModel aboutExtensionModel);
+    public void SetExtensionVersion(AboutExtensionModel aboutExtensionModel);
 }

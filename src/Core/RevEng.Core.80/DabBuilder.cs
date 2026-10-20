@@ -229,7 +229,7 @@ public class DabBuilder
             }
         }
 
-        if (options.DatabaseType == DatabaseType.SQLServer || options.DatabaseType == DatabaseType.SQLServerDacpac)
+        if (options.DatabaseType is DatabaseType.SQLServer or DatabaseType.SQLServerDacpac)
         {
             sb.AppendLine(CultureInfo.InvariantCulture, $"@echo Adding stored procedures");
 

@@ -101,7 +101,7 @@ public static class ServiceProviderBuilder
 
                 if (options.UncountableWords != null && options.UncountableWords.Count > 0)
                 {
-                    options.UncountableWords.ForEach(w => Vocabularies.Default.AddUncountable(w));
+                    options.UncountableWords.ForEach(Vocabularies.Default.AddUncountable);
                 }
 
                 if (options.PluralRules != null && options.PluralRules.Count > 0)

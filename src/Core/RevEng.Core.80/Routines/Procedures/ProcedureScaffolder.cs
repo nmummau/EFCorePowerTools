@@ -15,10 +15,6 @@ namespace RevEng.Core.Routines.Procedures;
 
 public abstract class ProcedureScaffolder : IRoutineScaffolder
 {
-#pragma warning disable SA1401 // Fields should be private
-    internal readonly ICSharpHelper Code;
-    internal IndentedStringBuilder Sb;
-#pragma warning restore SA1401 // Fields should be private
     private readonly IClrTypeMapper typeMapper;
     private readonly Scaffolder scaffolder;
 
@@ -34,8 +30,12 @@ public abstract class ProcedureScaffolder : IRoutineScaffolder
 
     public string ProviderUsing { get; set; }
 
+    internal ICSharpHelper Code { get; }
+
+    internal IndentedStringBuilder Sb { get; set; }
+
     public SavedModelFiles Save(ScaffoldedModel scaffoldedModel, string outputDir, string nameSpaceValue, bool useAsyncCalls, bool useInternalAccessModifier, bool useNullableReferences, GeneratedFileFormat fileFormat)
-        => ScaffoldHelper.Save(scaffoldedModel, outputDir, nameSpaceValue, useAsyncCalls, fileFormat);
+        => ScaffoldHelper.Save(scaffoldedModel, outputDir, fileFormat);
 
     public ScaffoldedModel ScaffoldModel(RoutineModel model, ModuleScaffolderOptions scaffolderOptions, List<string> schemas, ref List<string> errors)
     {
@@ -49,7 +49,7 @@ public abstract class ProcedureScaffolder : IRoutineScaffolder
 
         errors.AddRange(model.Errors);
 
-        schemas = schemas ?? new List<string>();
+        schemas ??= new List<string>();
 
         var invalidRoutines = new HashSet<Routine>();
         foreach (var routine in model.Routines)
@@ -95,9 +95,9 @@ public abstract class ProcedureScaffolder : IRoutineScaffolder
             }
         }
 
-        model.Routines.RemoveAll(r => invalidRoutines.Contains(r));
+        model.Routines.RemoveAll(invalidRoutines.Contains);
 
-        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (!(r is Function f) || !f.IsScalar)))
+        foreach (var routine in model.Routines.Where(r => string.IsNullOrEmpty(r.MappedType) && (r is not Function f || !f.IsScalar)))
         {
             var i = 1;
 

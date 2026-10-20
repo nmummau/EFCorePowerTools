@@ -5,5 +5,5 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IPickConfigDialog : IDialog<ConfigModel>
 {
-    void PublishConfigurations(IEnumerable<ConfigModel> configurations);
+    public void PublishConfigurations(IEnumerable<ConfigModel> configurations);
 }

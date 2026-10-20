@@ -1,44 +1,41 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ScaffoldingTester.Models;
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using ScaffoldingTester.Models;
 
-namespace ScaffoldingTester
+namespace ScaffoldingTester;
+
+internal static class Program
 {
-    class Program
+    private static async System.Threading.Tasks.Task Main()
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
-        {
-            using (var db = new NorthwindContext())
-            {
-                var orders = await db.GetProcedures().CustOrderHistAsync("ALFKI");
+        using var db = new NorthwindContext();
+        var orders = await db.GetProcedures().CustOrderHistAsync("ALFKI");
 
-                var retVal = new OutputParameter<int>();
-                var multi = await db.GetProcedures().MultiSetAsync(new DateTime(2021, 12, 24), 7.6m, retVal);
-                
-                //var list = new[] { "ALFKI", "BERGS", "VAFFE" };
+        var retVal = new OutputParameter<int>();
+        var multi = await db.GetProcedures().MultiSetAsync(new DateTime(2021, 12, 24), 7.6m, retVal);
 
-                var list = new[] { 10253L, 10255L, 10260L };
+        //var list = new[] { "ALFKI", "BERGS", "VAFFE" };
 
-                var customersQuery = db.Orders
-                    .Where(s => db.AsSplit(list).Contains(s.OrderId))
-                    .Select(o => new { o.OrderDate, o.CustomerId });
+        var list = new[] { 10253L, 10255L, 10260L };
+
+        var customersQuery = db.Orders
+            .Where(s => db.AsSplit(list).Contains(s.OrderId))
+            .Select(o => new { o.OrderDate, o.CustomerId });
 
 #if DEBUG
-                Console.WriteLine(customersQuery.ToQueryString());
+        Console.WriteLine(customersQuery.ToQueryString());
 #endif
-                var result = customersQuery.ToList();
+        var result = customersQuery.ToList();
 
-                foreach (var item in result)
-                {
-                    Console.WriteLine($"{item.CustomerId} : {item.OrderDate}");
-                }
-
-                var productCount = new OutputParameter<int?>();
-                var description = new OutputParameter<string>();
-                var outputRes = await db.GetProcedures()
-                    .OutputScenariosAsync(2021, productCount, description);
-            }
+        foreach (var item in result)
+        {
+            Console.WriteLine($"{item.CustomerId} : {item.OrderDate}");
         }
+
+        var productCount = new OutputParameter<int?>();
+        var description = new OutputParameter<string>();
+        var outputRes = await db.GetProcedures()
+            .OutputScenariosAsync(2021, productCount, description);
     }
 }

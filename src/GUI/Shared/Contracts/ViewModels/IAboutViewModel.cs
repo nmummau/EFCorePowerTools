@@ -5,15 +5,15 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IAboutViewModel : IViewModel
 {
-    event EventHandler CloseRequested;
+    public event EventHandler CloseRequested;
 
-    ICommand LoadedCommand { get; }
+    public ICommand LoadedCommand { get; }
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand OpenSourcesCommand { get; }
+    public ICommand OpenSourcesCommand { get; }
 
-    ICommand OpenMarketplaceCommand { get; }
+    public ICommand OpenMarketplaceCommand { get; }
 
-    string Version { get; }
+    public string Version { get; }
 }

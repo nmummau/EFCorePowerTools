@@ -4,438 +4,423 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Xunit;
 using RevEng.Common;
 using RevEng.Common.Cli;
 using RevEng.Common.Cli.Configuration;
+using Xunit;
 
-namespace UnitTests
+namespace UnitTests;
+
+public class CliObjectListTest
 {
-    public class CliObjectListTest
+    private readonly string cliTestDirectory = Path.Combine(AppContext.BaseDirectory, "CliObjectListTests");
+
+    public CliObjectListTest()
     {
-        private readonly string cliTestDirectory = Path.Combine(AppContext.BaseDirectory, "CliObjectListTests");
-
-        public CliObjectListTest()
+        if (!Directory.Exists(cliTestDirectory))
         {
-            if (!Directory.Exists(cliTestDirectory))
+            Directory.CreateDirectory(cliTestDirectory);
+        }
+    }
+
+    [Fact]
+    public void CanGetConfig()
+    {
+        var config = GetConfig();
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(7, result.Count);
+        Assert.Contains(result, x => x.Name == "[dbo].[Users]");
+        Assert.Contains(result, x => x.Name == "[other].[Accounts]");
+        Assert.Contains(result, x => x.Name == "[dbo].[Extras]");
+        Assert.Contains(result, x => x.Name == "[dbo].[Actors]");
+        Assert.Contains(result, x => x.Name == "[dbo].[Directors]");
+        Assert.Contains(result, x => x.Name == "[dbo].[UsersView]");
+        Assert.Contains(result, x => x.Name == "TestProcedure");
+
+        var testProcedure = result.Single(x => x.Name == "TestProcedure");
+
+        Assert.True(testProcedure.UseLegacyResultSetDiscovery);
+        Assert.Equal("MyNamespace.MyType", testProcedure.MappedType);
+        Assert.True(testProcedure.GenerateEmptyResultType);
+    }
+
+    [Fact]
+    public void ToCommandOptionsMapsGenerateEmptyResultTypeForStoredProcedure()
+    {
+        var config = GetConfig();
+        var configPath = TestPath("test.efcpt-config.json");
+
+        var commandOptions = config.ToCommandOptions(
+            "Server=.;Database=TestDb;Trusted_Connection=True;",
+            DatabaseType.SQLServer,
+            cliTestDirectory,
+            isDacpac: false,
+            configPath,
+            "efpt.renaming.json");
+
+        var testProcedure = commandOptions.Tables.Single(x => x.ObjectType == ObjectType.Procedure && x.Name == "TestProcedure");
+        Assert.True(testProcedure.GenerateEmptyResultType);
+    }
+
+    [Fact]
+    public void CanUseGobalFilter()
+    {
+        var config = GetConfig();
+
+        config.Views.Add(new View { ExclusionWildcard = "*" });
+        config.Tables.Add(new Table { ExclusionWildcard = "*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.StartsWith("Dummy", result[0].Name);
+    }
+
+    [Fact]
+    public void CanAddStartsWithFilter()
+    {
+        var config = GetConfig();
+
+        config.Tables.Add(new Table { ExclusionWildcard = "[dbo]*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+    }
+
+    [Fact]
+    public void CanAddStartsWithFilter2()
+    {
+        var config = GetConfig();
+
+        config.Tables.Add(new Table { ExclusionWildcard = "[other]*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(6, result.Count);
+    }
+
+    [Fact]
+    public void CanAddStartsWithFilterAndExplicitInclude()
+    {
+        var config = GetConfig();
+
+        config.Tables.First().Exclude = false;
+
+        config.Tables.Add(new Table { ExclusionWildcard = "[dbo]*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(4, result.Count);
+    }
+
+    [Fact]
+    public void MultipleExclusionWildcardExcludes()
+    {
+        var config = GetConfig();
+
+        config.Tables.Add(new Table { ExclusionWildcard = "*Users*" });
+        config.Tables.Add(new Table { ExclusionWildcard = "*Accounts*" });
+        config.Views.Add(new View { ExclusionWildcard = "*Users*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(4, result.Count);
+    }
+
+    [Fact]
+    public void CanAddEndsWithFilter()
+    {
+        var config = GetConfig();
+
+        config.Tables.Add(new Table { ExclusionWildcard = "*ors]" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Count);
+    }
+
+    [Fact]
+    public void CanAddEndsWithFilterAndExplicitInclude()
+    {
+        var config = GetConfig();
+
+        config.Tables.First().Exclude = false;
+
+        config.Tables.Add(new Table { ExclusionWildcard = "*ors]" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Count);
+    }
+
+    [Fact]
+    public void CanAddContainsFilter()
+    {
+        var config = GetConfig();
+
+        config.Tables.Add(new Table { ExclusionWildcard = "*].[Ac*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Count);
+    }
+
+    [Fact]
+    public void CanAddContainsFilterAndExplicitInclude()
+    {
+        var config = GetConfig();
+
+        config.Tables[1].Exclude = false;
+
+        config.Tables.Add(new Table { ExclusionWildcard = "*].[Ac*" });
+
+        var result = CliConfigMapper.BuildObjectList(config);
+
+        Assert.NotNull(result);
+        Assert.Equal(6, result.Count);
+    }
+
+    [Fact]
+    public void TryGetCliConfigWithExistingFileReturnsExpectedConfig()
+    {
+        var config = GetConfig();
+        config.CodeGeneration.UseStoredProcedureResultSetFallback = false;
+        config.CodeGeneration.FileLineEndings = "crlf";
+        config.CodeGeneration.FileCharset = "utf-8";
+
+        var testPath = TestPath("test.efpcli.json");
+        try
+        {
+            WriteConfigFile(config, testPath);
+
+            var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
+                DatabaseType.SQLServer,
+                GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
+                out var resultConfig,
+                out var warnings);
+
+            Assert.True(fetchedConfigSuccess);
+            Assert.NotNull(resultConfig);
+            Assert.Equal(config.Tables.Count, resultConfig.Tables.Count);
+            Assert.False(resultConfig.CodeGeneration.UseStoredProcedureResultSetFallback);
+            Assert.Equal("crlf", resultConfig.CodeGeneration.FileLineEndings);
+            Assert.Equal("utf-8", resultConfig.CodeGeneration.FileCharset);
+
+            for (var i = 0; i < config.Tables.Count; i++)
             {
-                Directory.CreateDirectory(cliTestDirectory);
+                Assert.Equal(config.Tables[i].Name, resultConfig.Tables[i].Name);
+                Assert.Equal(config.Tables[i].Exclude, resultConfig.Tables[i].Exclude);
+                Assert.Equal(config.Tables[i].ExclusionWildcard, resultConfig.Tables[i].ExclusionWildcard);
             }
         }
-
-        [Fact]
-        public void CanGetConfig()
+        finally
         {
-            var config = GetConfig();
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(7, result.Count);
-            Assert.Contains(result, x => x.Name == "[dbo].[Users]");
-            Assert.Contains(result, x => x.Name == "[other].[Accounts]");
-            Assert.Contains(result, x => x.Name == "[dbo].[Extras]");
-            Assert.Contains(result, x => x.Name == "[dbo].[Actors]");
-            Assert.Contains(result, x => x.Name == "[dbo].[Directors]");
-            Assert.Contains(result, x => x.Name == "[dbo].[UsersView]");
-            Assert.Contains(result, x => x.Name == "TestProcedure");
-
-            var testProcedure = result.Single(x => x.Name == "TestProcedure");
-
-            Assert.True(testProcedure.UseLegacyResultSetDiscovery);
-            Assert.Equal("MyNamespace.MyType", testProcedure.MappedType);
-            Assert.True(testProcedure.GenerateEmptyResultType);
+            RemoveConfigFile(testPath);
         }
+    }
 
-        [Fact]
-        public void ToCommandOptionsMapsGenerateEmptyResultTypeForStoredProcedure()
+    [Fact]
+    public void ToCommandOptionsMapsFileLineEndings()
+    {
+        var config = GetConfig();
+        config.CodeGeneration.FileLineEndings = "lf";
+        config.Names.DbContextName = "TestContext";
+
+        var commandOptions = config.ToCommandOptions(
+            "Server=(localdb)\\mssqllocaldb;Database=Northwind;Trusted_Connection=True;",
+            DatabaseType.SQLServer,
+            cliTestDirectory,
+            false,
+            TestPath("test.efpcli.json"),
+            TestPath("efpt.renaming.json"));
+
+        Assert.Equal("lf", commandOptions.FileLineEndingStyle);
+    }
+
+    [Fact]
+    public void ToCommandOptionsMapsFileCharset()
+    {
+        var config = GetConfig();
+        config.CodeGeneration.FileCharset = "utf-8";
+        config.Names.DbContextName = "TestContext";
+
+        var commandOptions = config.ToCommandOptions(
+            "Server=(localdb)\\mssqllocaldb;Database=Northwind;Trusted_Connection=True;",
+            DatabaseType.SQLServer,
+            cliTestDirectory,
+            false,
+            TestPath("test.efpcli.json"),
+            TestPath("efpt.renaming.json"));
+
+        Assert.Equal("utf-8", commandOptions.FileCharset);
+    }
+
+    [Fact]
+    public void FileCharsetDefaultsToUtf8Bom()
+    {
+        Assert.Equal("utf-8-bom", new CodeGeneration().FileCharset);
+        Assert.Equal("utf-8-bom", new ReverseEngineerCommandOptions().FileCharset);
+    }
+
+    [Fact]
+    public void TryGetCliConfigWithExcludedColumnsReturns()
+    {
+        var config = GetConfig();
+        var userTable = config.Tables.Single(x => x.Name == "[dbo].[Users]");
+        userTable.ExcludedColumns = new List<string> { "UserId", "AccountId", "Name" };
+
+        var userView = config.Views.Single(x => x.Name == "[dbo].[UsersView]");
+        userView.ExcludedColumns = new List<string> { "UserId", "AccountId", "Name" };
+
+        config.Functions = new List<Function>()
         {
-            var config = GetConfig();
-            var configPath = TestPath("test.efcpt-config.json");
-
-            var commandOptions = config.ToCommandOptions(
-                "Server=.;Database=TestDb;Trusted_Connection=True;",
-                DatabaseType.SQLServer,
-                cliTestDirectory,
-                isDacpac: false,
-                configPath,
-                "efpt.renaming.json");
-
-            var testProcedure = commandOptions.Tables.Single(x => x.ObjectType == ObjectType.Procedure && x.Name == "TestProcedure");
-            Assert.True(testProcedure.GenerateEmptyResultType);
-        }
-
-        [Fact]
-        public void CanUseGobalFilter()
-        {
-            var config = GetConfig();
-
-            config.Views.Add(new View { ExclusionWildcard = "*" });
-            config.Tables.Add(new Table { ExclusionWildcard = "*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
-            Assert.StartsWith("Dummy", result[0].Name);
-        }
-
-        [Fact]
-        public void CanAddStartsWithFilter()
-        {
-            var config = GetConfig();
-
-            config.Tables.Add(new Table { ExclusionWildcard = "[dbo]*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(3, result.Count);
-        }
-
-        [Fact]
-        public void CanAddStartsWithFilter2()
-        {
-            var config = GetConfig();
-
-            config.Tables.Add(new Table { ExclusionWildcard = "[other]*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(6, result.Count);
-        }
-
-        [Fact]
-        public void CanAddStartsWithFilterAndExplicitInclude()
-        {
-            var config = GetConfig();
-
-            config.Tables.First().Exclude = false;
-
-            config.Tables.Add(new Table { ExclusionWildcard = "[dbo]*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(4, result.Count);
-        }
-
-        [Fact]
-        public void MultipleExclusionWildcardExcludes()
-        {
-            var config = GetConfig();
-
-            config.Tables.Add(new Table { ExclusionWildcard = "*Users*" });
-            config.Tables.Add(new Table { ExclusionWildcard = "*Accounts*" });
-            config.Views.Add(new View { ExclusionWildcard = "*Users*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(4, result.Count);
-        }
-
-        [Fact]
-        public void CanAddEndsWithFilter()
-        {
-            var config = GetConfig();
-
-            config.Tables.Add(new Table { ExclusionWildcard = "*ors]" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(5, result.Count);
-        }
-
-        [Fact]
-        public void CanAddEndsWithFilterAndExplicitInclude()
-        {
-            var config = GetConfig();
-
-            config.Tables.First().Exclude = false;
-
-            config.Tables.Add(new Table { ExclusionWildcard = "*ors]" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(5, result.Count);
-        }
-
-        [Fact]
-        public void CanAddContainsFilter()
-        {
-            var config = GetConfig();
-
-            config.Tables.Add(new Table { ExclusionWildcard = "*].[Ac*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(5, result.Count);
-        }
-
-        [Fact]
-        public void CanAddContainsFilterAndExplicitInclude()
-        {
-            var config = GetConfig();
-
-            config.Tables[1].Exclude = false;
-
-            config.Tables.Add(new Table { ExclusionWildcard = "*].[Ac*" });
-
-            var result = CliConfigMapper.BuildObjectList(config);
-
-            Assert.NotNull(result);
-            Assert.Equal(6, result.Count);
-        }
-
-        [Fact]
-        public void TryGetCliConfigWithExistingFileReturnsExpectedConfig()
-        {
-            var config = GetConfig();
-            config.CodeGeneration.UseStoredProcedureResultSetFallback = false;
-            config.CodeGeneration.FileLineEndings = "crlf";
-            config.CodeGeneration.FileCharset = "utf-8";
-
-            var testPath = TestPath("test.efpcli.json");
-            try
+            new()
             {
-                WriteConfigFile(config, testPath);
-
-                var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
-                    DatabaseType.SQLServer,
-                    GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
-                    out CliConfig resultConfig,
-                    out List<string> warnings);
-
-                Assert.True(fetchedConfigSuccess);
-                Assert.NotNull(resultConfig);
-                Assert.Equal(config.Tables.Count, resultConfig.Tables.Count);
-                Assert.False(resultConfig.CodeGeneration.UseStoredProcedureResultSetFallback);
-                Assert.Equal("crlf", resultConfig.CodeGeneration.FileLineEndings);
-                Assert.Equal("utf-8", resultConfig.CodeGeneration.FileCharset);
-
-                for (var i = 0; i < config.Tables.Count; i++)
-                {
-                    Assert.Equal(config.Tables[i].Name, resultConfig.Tables[i].Name);
-                    Assert.Equal(config.Tables[i].Exclude, resultConfig.Tables[i].Exclude);
-                    Assert.Equal(config.Tables[i].ExclusionWildcard, resultConfig.Tables[i].ExclusionWildcard);
-                }
+                Name = "TestFunction",
+                ExcludedColumns = new List<string> { "ColumnA", "ColumnB"}
             }
-            finally
+        };
+
+        config.StoredProcedures = new List<StoredProcedure>()
+        {
+            new()
             {
-                RemoveConfigFile(testPath);
+                Name = "TestProcedure",
+                ExcludedColumns = new List<string> { "ColumnA", "ColumnB"}
             }
-        }
+        };
 
-        [Fact]
-        public void ToCommandOptionsMapsFileLineEndings()
+        var testPath = TestPath("test.efpcli.json");
+        try
         {
-            var config = GetConfig();
-            config.CodeGeneration.FileLineEndings = "lf";
-            config.Names.DbContextName = "TestContext";
+            WriteConfigFile(config, testPath);
 
-            var commandOptions = config.ToCommandOptions(
-                "Server=(localdb)\\mssqllocaldb;Database=Northwind;Trusted_Connection=True;",
+            var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
                 DatabaseType.SQLServer,
-                cliTestDirectory,
-                false,
-                TestPath("test.efpcli.json"),
-                TestPath("efpt.renaming.json"));
+                GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
+                out var resultConfig,
+                out var warnings);
 
-            Assert.Equal("lf", commandOptions.FileLineEndingStyle);
+            Assert.True(fetchedConfigSuccess);
+            Assert.NotNull(resultConfig);
+            Assert.Equal(config.Tables.Count, resultConfig.Tables.Count);
+
+            for (var i = 0; i < config.Tables.Count; i++)
+            {
+                Assert.Equal(config.Tables[i].Name, resultConfig.Tables[i].Name);
+                Assert.Equal(config.Tables[i].Exclude, resultConfig.Tables[i].Exclude);
+                Assert.Equal(config.Tables[i].ExclusionWildcard, resultConfig.Tables[i].ExclusionWildcard);
+            }
+
+            Assert.Equal(4, warnings.Count);
+            Assert.Equal(3, resultConfig.Tables[0].ExcludedColumns.Count);
+            Assert.Equal("UserId", resultConfig.Tables[0].ExcludedColumns[0]);
+            Assert.Equal(3, resultConfig.Views[0].ExcludedColumns.Count);
+            Assert.Equal("UserId", resultConfig.Views[0].ExcludedColumns[0]);
+            Assert.Null(resultConfig.Functions[0].ExcludedColumns);
+            Assert.Null(resultConfig.StoredProcedures[0].ExcludedColumns);
         }
-
-        [Fact]
-        public void ToCommandOptionsMapsFileCharset()
+        finally
         {
-            var config = GetConfig();
-            config.CodeGeneration.FileCharset = "utf-8";
-            config.Names.DbContextName = "TestContext";
-
-            var commandOptions = config.ToCommandOptions(
-                "Server=(localdb)\\mssqllocaldb;Database=Northwind;Trusted_Connection=True;",
-                DatabaseType.SQLServer,
-                cliTestDirectory,
-                false,
-                TestPath("test.efpcli.json"),
-                TestPath("efpt.renaming.json"));
-
-            Assert.Equal("utf-8", commandOptions.FileCharset);
+            RemoveConfigFile(testPath);
         }
+    }
 
-        [Fact]
-        public void FileCharsetDefaultsToUtf8Bom()
+    private static List<TableModel> GetDefaultTables(DatabaseType databaseType) => new()
         {
-            Assert.Equal("utf-8-bom", new CodeGeneration().FileCharset);
-            Assert.Equal("utf-8-bom", new ReverseEngineerCommandOptions().FileCharset);
-        }
+            new("Users", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()
+            {
+                new("UserId", "", true, false),
+                new("AccountId", "", false, true),
+                new("Name", "", false, false),
+                new("Email", "", false, false),
 
-        [Fact]
-        public void TryGetCliConfigWithExcludedColumnsReturns()
+            }),
+            new("Accounts", "other", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Extras", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Actors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("Directors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
+            new("TestFunction", "dbo", databaseType, ObjectType.ScalarFunction, new List<ColumnModel>()
+            {
+                new("ColumnA", "", false, false),
+                new("ColumnB", "", false, false)
+            }),
+            new("TestProcedure", "dbo", databaseType, ObjectType.Procedure, new List<ColumnModel>()
+            {
+                new("ColumnA", "", false, false),
+                new("ColumnB", "", false, false)
+            }),
+            new("UsersView", "dbo", databaseType, ObjectType.View, new List<ColumnModel>()
+            {
+                new("UserId", "", true, false),
+                new("AccountId", "", false, true),
+                new("Name", "", false, false)
+            })
+        };
+
+    private void WriteConfigFile(CliConfig configToWrite, string fullPath)
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        File.WriteAllText(fullPath, JsonSerializer.Serialize(configToWrite, options), Encoding.UTF8);
+    }
+
+    private void RemoveConfigFile(string fullPath) => File.Delete(fullPath);
+
+    private string TestPath(string file) => Path.Combine(cliTestDirectory, file);
+
+    private CliConfig GetConfig()
+    {
+        var config = new CliConfig
         {
-            var config = GetConfig();
-            var userTable = config.Tables.Single(x => x.Name == "[dbo].[Users]");
-            userTable.ExcludedColumns = new List<string> { "UserId", "AccountId", "Name" };
-
-            var userView = config.Views.Single(x => x.Name == "[dbo].[UsersView]");
-            userView.ExcludedColumns = new List<string> { "UserId", "AccountId", "Name" };
-
-            config.Functions = new List<Function>()
+            Tables = new List<Table>
+            {
+                new() {
+                    Name = "[dbo].[Users]",
+                },
+                new() {
+                    Name = "[other].[Accounts]",
+                },
+                new() {
+                    Name = "[dbo].[Extras]",
+                },
+                new() {
+                    Name = "[dbo].[Actors]",
+                },
+                new() {
+                    Name = "[dbo].[Directors]",
+                },
+            },
+            Views = new List<View>()
             {
                 new()
                 {
-                    Name = "TestFunction",
-                    ExcludedColumns = new List<string> { "ColumnA", "ColumnB"}
+                    Name = "[dbo].[UsersView]"
                 }
-            };
-
-            config.StoredProcedures = new List<StoredProcedure>()
+            },
+            StoredProcedures = new List<StoredProcedure>()
             {
                 new()
                 {
                     Name = "TestProcedure",
-                    ExcludedColumns = new List<string> { "ColumnA", "ColumnB"}
+                    UseLegacyResultsetDiscovery = true,
+                    MappedType = "MyNamespace.MyType",
+                    GenerateEmptyResultType = true,
                 }
-            };
-
-            var testPath = TestPath("test.efpcli.json");
-            try
-            {
-                WriteConfigFile(config, testPath);
-
-                var fetchedConfigSuccess = CliConfigMapper.TryGetCliConfig(testPath, "fakeConnectionString",
-                    DatabaseType.SQLServer,
-                    GetDefaultTables(DatabaseType.SQLServer), CodeGenerationMode.EFCore8,
-                    out CliConfig resultConfig,
-                    out List<string> warnings);
-
-                Assert.True(fetchedConfigSuccess);
-                Assert.NotNull(resultConfig);
-                Assert.Equal(config.Tables.Count, resultConfig.Tables.Count);
-
-                for (var i = 0; i < config.Tables.Count; i++)
-                {
-                    Assert.Equal(config.Tables[i].Name, resultConfig.Tables[i].Name);
-                    Assert.Equal(config.Tables[i].Exclude, resultConfig.Tables[i].Exclude);
-                    Assert.Equal(config.Tables[i].ExclusionWildcard, resultConfig.Tables[i].ExclusionWildcard);
-                }
-
-                Assert.Equal(4, warnings.Count);
-                Assert.Equal(3, resultConfig.Tables[0].ExcludedColumns.Count);
-                Assert.Equal("UserId", resultConfig.Tables[0].ExcludedColumns[0]);
-                Assert.Equal(3, resultConfig.Views[0].ExcludedColumns.Count);
-                Assert.Equal("UserId", resultConfig.Views[0].ExcludedColumns[0]);
-                Assert.Null(resultConfig.Functions[0].ExcludedColumns);
-                Assert.Null(resultConfig.StoredProcedures[0].ExcludedColumns);
             }
-            finally
-            {
-                RemoveConfigFile(testPath);
-            }
-        }
+        };
 
-        private static List<TableModel> GetDefaultTables(DatabaseType databaseType)
-        {
-            return new List<TableModel>()
-            {
-                new TableModel("Users", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()
-                {
-                    new ColumnModel("UserId", "", true, false),
-                    new ColumnModel("AccountId", "", false, true),
-                    new ColumnModel("Name", "", false, false),
-                    new ColumnModel("Email", "", false, false),
-
-                }),
-                new TableModel("Accounts", "other", databaseType, ObjectType.Table, new List<ColumnModel>()),
-                new TableModel("Extras", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-                new TableModel("Actors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-                new TableModel("Directors", "dbo", databaseType, ObjectType.Table, new List<ColumnModel>()),
-                new TableModel("TestFunction", "dbo", databaseType, ObjectType.ScalarFunction, new List<ColumnModel>()
-                {
-                    new ColumnModel("ColumnA", "", false, false),
-                    new ColumnModel("ColumnB", "", false, false)
-                }),
-                new TableModel("TestProcedure", "dbo", databaseType, ObjectType.Procedure, new List<ColumnModel>()
-                {
-                    new ColumnModel("ColumnA", "", false, false),
-                    new ColumnModel("ColumnB", "", false, false)
-                }),
-                new TableModel("UsersView", "dbo", databaseType, ObjectType.View, new List<ColumnModel>()
-                {
-                    new ColumnModel("UserId", "", true, false),
-                    new ColumnModel("AccountId", "", false, true),
-                    new ColumnModel("Name", "", false, false)
-                })
-            };
-        }
-
-        private void WriteConfigFile(CliConfig configToWrite, string fullPath)
-        {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(fullPath, JsonSerializer.Serialize(configToWrite, options), Encoding.UTF8);
-        }
-
-        private void RemoveConfigFile(string fullPath)
-        {
-            File.Delete(fullPath);
-        }
-
-        private string TestPath(string file)
-        {
-            return System.IO.Path.Combine(cliTestDirectory, file);
-        }
-
-        private CliConfig GetConfig()
-        {
-            var config = new CliConfig
-            {
-                Tables = new System.Collections.Generic.List<Table>
-                {
-                    new Table
-                    {
-                        Name = "[dbo].[Users]",
-                    },
-                    new Table
-                    {
-                        Name = "[other].[Accounts]",
-                    },
-                    new Table
-                    {
-                        Name = "[dbo].[Extras]",
-                    },
-                    new Table
-                    {
-                        Name = "[dbo].[Actors]",
-                    },
-                    new Table
-                    {
-                        Name = "[dbo].[Directors]",
-                    },
-                },
-                Views = new List<View>()
-                {
-                    new View()
-                    {
-                        Name = "[dbo].[UsersView]"
-                    }
-                },
-                StoredProcedures = new List<StoredProcedure>()
-                {
-                    new StoredProcedure()
-                    {
-                        Name = "TestProcedure",
-                        UseLegacyResultsetDiscovery = true,
-                        MappedType = "MyNamespace.MyType",
-                        GenerateEmptyResultType = true,
-                    }
-                }
-            };
-
-            return config;
-        }
+        return config;
     }
 }

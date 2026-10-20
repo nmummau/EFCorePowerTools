@@ -10,15 +10,15 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface ICompareResultViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    bool ShowDifferencesOnly { get; set; }
+    public bool ShowDifferencesOnly { get; set; }
 
-    ICommand CloseCommand { get; }
+    public ICommand CloseCommand { get; }
 
-    ICommand SetVisibilityCommand { get; }
+    public ICommand SetVisibilityCommand { get; }
 
-    ObservableCollection<CompareLogItemViewModel> Logs { get; }
+    public ObservableCollection<CompareLogItemViewModel> Logs { get; }
 
-    void AddComparisonResult(IEnumerable<CompareLogModel> logs);
+    public void AddComparisonResult(IEnumerable<CompareLogModel> logs);
 }

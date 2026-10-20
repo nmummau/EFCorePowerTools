@@ -1,12 +1,8 @@
-﻿using System;
+using System;
 
-namespace MigrationsTest
+namespace MigrationsTest;
+
+internal static class Program
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
-    }
+    private static void Main() => Console.WriteLine("Hello World!");
 }

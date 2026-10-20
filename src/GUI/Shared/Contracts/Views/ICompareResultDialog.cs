@@ -5,5 +5,5 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface ICompareResultDialog : IDialog<object>
 {
-    void AddComparisonResult(IEnumerable<CompareLogModel> result);
+    public void AddComparisonResult(IEnumerable<CompareLogModel> result);
 }

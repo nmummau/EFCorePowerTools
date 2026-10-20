@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -103,6 +104,7 @@ public static class Providers
         return GetReadMeText(commandOptions, template, packages, redactedConnectionString);
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; supported provider packages no longer depend on this flag.")]
     public static List<NuGetPackage> GetNeededPackages(DatabaseType databaseType, bool useSpatial, bool useNodaTime, bool useDateOnlyTimeOnly, bool useHierarchyId, bool discoverMultipleResultSets, bool hasProcedures, CodeGenerationMode codeGenerationMode)
     {
         // Update versions here when adding provider and other updates
@@ -266,8 +268,8 @@ public static class Providers
 
         if (databaseType == DatabaseType.Mysql)
         {
-            var pkgVersion = string.Empty;
             var prefix = "Pomelo";
+            string pkgVersion;
             switch (codeGenerationMode)
             {
                 case CodeGenerationMode.EFCore8:
@@ -283,7 +285,8 @@ public static class Providers
                     prefix = "Microting";
                     break;
 
-                default: throw new NotImplementedException();
+                default:
+                    throw new NotImplementedException();
             }
 
             packages.Add(new NuGetPackage
@@ -413,35 +416,35 @@ public static class Providers
         return result;
     }
 
-    private static Dictionary<string, List<string>> GetProvidersWithAliases() => new Dictionary<string, List<string>>
+    private static Dictionary<string, List<string>> GetProvidersWithAliases() => new()
+    {
         {
-            {
-                "Microsoft.EntityFrameworkCore.SqlServer",
-                new List<string> { "mssql", "sqlserver" }
-            },
-            {
-                "Microsoft.EntityFrameworkCore.Sqlite",
-                new List<string> { "sqlite" }
-            },
-            {
-                "Npgsql.EntityFrameworkCore.PostgreSQL",
-                new List<string> { "postgres", "postgresql" }
-            },
-            {
-                "Pomelo.EntityFrameworkCore.MySql",
-                new List<string> { "mysql" }
-            },
-            {
-                "Oracle.EntityFrameworkCore",
-                new List<string> { "oracle" }
-            },
-            {
-                "FirebirdSql.EntityFrameworkCore.Firebird",
-                new List<string> { "firebird" }
-            },
-            {
-                "EFCore.Snowflake",
-                new List<string> { "snowflake" }
-            },
-        };
+            "Microsoft.EntityFrameworkCore.SqlServer",
+            new List<string> { "mssql", "sqlserver" }
+        },
+        {
+            "Microsoft.EntityFrameworkCore.Sqlite",
+            new List<string> { "sqlite" }
+        },
+        {
+            "Npgsql.EntityFrameworkCore.PostgreSQL",
+            new List<string> { "postgres", "postgresql" }
+        },
+        {
+            "Pomelo.EntityFrameworkCore.MySql",
+            new List<string> { "mysql" }
+        },
+        {
+            "Oracle.EntityFrameworkCore",
+            new List<string> { "oracle" }
+        },
+        {
+            "FirebirdSql.EntityFrameworkCore.Firebird",
+            new List<string> { "firebird" }
+        },
+        {
+            "EFCore.Snowflake",
+            new List<string> { "snowflake" }
+        },
+    };
 }

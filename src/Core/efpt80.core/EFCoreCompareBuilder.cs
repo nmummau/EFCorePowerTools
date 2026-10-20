@@ -62,7 +62,7 @@ internal static class EfCoreCompareBuilder
         return result;
     }
 
-    private static List<Tuple<string, string>> BuildResult(string outputPath, string startupOutputPath,  bool listDbContexts)
+    private static List<Tuple<string, string>> BuildResult(string outputPath, string startupOutputPath, bool listDbContexts)
     {
         var result = new List<Tuple<string, string>>();
         var operations = GetOperations(outputPath, startupOutputPath);
@@ -87,11 +87,7 @@ internal static class EfCoreCompareBuilder
 
     private static DbContextOperations GetOperations(string outputPath, string startupOutputPath)
     {
-        var assembly = Load(outputPath);
-        if (assembly == null)
-        {
-            throw new ArgumentException("Unable to load project assembly");
-        }
+        var assembly = Load(outputPath) ?? throw new ArgumentException("Unable to load project assembly");
 
         Assembly startupAssembly = null;
 

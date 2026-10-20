@@ -7,11 +7,11 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface ICompareOptionsViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    void AddDatabaseConnections(IEnumerable<DatabaseConnectionModel> connections);
+    public void AddDatabaseConnections(IEnumerable<DatabaseConnectionModel> connections);
 
-    void AddContextTypes(IEnumerable<string> contextTypes);
+    public void AddContextTypes(IEnumerable<string> contextTypes);
 
-    (DatabaseConnectionModel Connection, IEnumerable<string> ContextTypes) GetSelection();
+    public (DatabaseConnectionModel Connection, IEnumerable<string> ContextTypes) GetSelection();
 }

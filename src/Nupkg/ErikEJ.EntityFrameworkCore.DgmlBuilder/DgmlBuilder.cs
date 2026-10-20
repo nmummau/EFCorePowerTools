@@ -20,7 +20,7 @@ public static class DgmlBuilder
         }
 #pragma warning restore CA1510 // Use ArgumentNullException throw helper
 
-        var result = DebugViewParser.Parse(debugView.Split(new[] { Environment.NewLine }, StringSplitOptions.None), contextName);
+        var result = DebugViewParser.Parse(debugView.Split([Environment.NewLine], StringSplitOptions.None), contextName);
 
         var nodes = string.Join(Environment.NewLine, result.Nodes);
         var links = string.Join(Environment.NewLine, result.Links);

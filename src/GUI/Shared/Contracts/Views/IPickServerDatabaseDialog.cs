@@ -8,15 +8,15 @@ namespace EFCorePowerTools.Contracts.Views;
 
 public interface IPickServerDatabaseDialog : IDialog<(DatabaseConnectionModel Connection, CodeGenerationMode CodeGenerationMode, bool FilterSchemas, SchemaInfo[] Schemas, string UiHint, WizardEventArgs WizardArgs)>
 {
-    void PublishConnections(IEnumerable<DatabaseConnectionModel> connections);
+    public void PublishConnections(IEnumerable<DatabaseConnectionModel> connections);
 
-    void PublishDefinitions(IEnumerable<DatabaseConnectionModel> definitions);
+    public void PublishDefinitions(IEnumerable<DatabaseConnectionModel> definitions);
 
-    void PublishSchemas(IEnumerable<SchemaInfo> schemas);
+    public void PublishSchemas(IEnumerable<SchemaInfo> schemas);
 
-    void PublishCodeGenerationMode(CodeGenerationMode codeGenerationMode, IList<CodeGenerationItem> allowedVersions);
+    public void PublishCodeGenerationMode(CodeGenerationMode codeGenerationMode, IList<CodeGenerationItem> allowedVersions);
 
-    void PublishUiHint(string uiHint);
+    public void PublishUiHint(string uiHint);
 
-    (DatabaseConnectionModel Connection, CodeGenerationMode CodeGenerationMode, bool FilterSchemas, SchemaInfo[] Schemas, string UiHint, WizardEventArgs WizardArgs) GetResults();
+    public (DatabaseConnectionModel Connection, CodeGenerationMode CodeGenerationMode, bool FilterSchemas, SchemaInfo[] Schemas, string UiHint, WizardEventArgs WizardArgs) GetResults();
 }

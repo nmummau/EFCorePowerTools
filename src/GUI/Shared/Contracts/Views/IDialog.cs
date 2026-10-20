@@ -7,5 +7,5 @@ public interface IDialog<TPayload> : IView
     /// </summary>
     /// <param name="modal"><b>True</b>, if the dialog should be modal, otherwise false.</param>
     /// <returns>A value tuple containing if the user closed the dialog with <b>OK</b>, and any optional payload.</returns>
-    (bool ClosedByOK, TPayload Payload) ShowAndAwaitUserResponse(bool modal);
+    public (bool ClosedByOK, TPayload Payload) ShowAndAwaitUserResponse(bool modal);
 }

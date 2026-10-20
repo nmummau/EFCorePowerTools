@@ -79,7 +79,7 @@ public class SqlServerStoredProcedureScaffolder : ProcedureScaffolder, IProcedur
 
         var outParams = allOutParams.SkipLast(1).ToList();
 
-        var retValueName = allOutParams[allOutParams.Count - 1].Name;
+        var retValueName = allOutParams[^1].Name;
 
         // Check for naming conflicts with the return value parameter
         var allNonReturnParamNames = procedure.Parameters

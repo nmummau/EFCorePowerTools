@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace RevEng.Core;
 public static class DbContextSplitter
 {
     // Adapted from https://github.com/lauxjpn/DbContextOnModelCreatingSplitter
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Retain the public signature; the context name is read from the source file.")]
     public static List<string> Split(string dbContextPath, string configNamespace, bool supportNullable, string dbContextName, GeneratedFileFormat fileFormat)
     {
         ArgumentNullException.ThrowIfNull(dbContextPath);
@@ -36,7 +38,7 @@ public static class DbContextSplitter
 
         var configurationNamespace = configNamespace ?? contextNamespace;
 
-        configurationNamespace = configurationNamespace + ".Configurations";
+        configurationNamespace += ".Configurations";
 
         var contextUsingStatements = Regex.Matches(source, @"^using\s+.*?;", RegexOptions.Multiline | RegexOptions.Singleline, TimeSpan.FromSeconds(5))
             .Cast<Match>()
@@ -159,7 +161,7 @@ public static class DbContextSplitter
 
             if (line.Trim().StartsWith("modelBuilder.Entity<", StringComparison.InvariantCulture))
             {
-                spaces = line.Substring(0, line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase));
+                spaces = line[..line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase)];
                 inEntityBuilder = true;
                 if (!configLinesWritten)
                 {
@@ -211,7 +213,7 @@ public static class DbContextSplitter
         {
             if (line.Trim().StartsWith("modelBuilder.Entity<", StringComparison.InvariantCulture))
             {
-                spaces = line.Substring(0, line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase));
+                spaces = line[..line.IndexOf("modelBuilder.Entity<", StringComparison.OrdinalIgnoreCase)];
                 inEntityBuilder = true;
                 continue;
             }
