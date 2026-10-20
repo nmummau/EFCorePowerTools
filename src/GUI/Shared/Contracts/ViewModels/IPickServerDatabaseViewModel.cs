@@ -10,31 +10,31 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IPickServerDatabaseViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand LoadedCommand { get; }
+    public ICommand LoadedCommand { get; }
 
-    ICommand AddDatabaseConnectionCommand { get; }
+    public ICommand AddDatabaseConnectionCommand { get; }
 
-    ICommand AddAdhocDatabaseConnectionCommand { get; }
+    public ICommand AddAdhocDatabaseConnectionCommand { get; }
 
-    ICommand AddDatabaseDefinitionCommand { get; }
+    public ICommand AddDatabaseDefinitionCommand { get; }
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ObservableCollection<DatabaseConnectionModel> DatabaseConnections { get; }
+    public ObservableCollection<DatabaseConnectionModel> DatabaseConnections { get; }
 
-    ObservableCollection<CodeGenerationItem> CodeGenerationModeList { get; }
+    public ObservableCollection<CodeGenerationItem> CodeGenerationModeList { get; }
 
-    List<SchemaInfo> Schemas { get; }
+    public List<SchemaInfo> Schemas { get; }
 
-    DatabaseConnectionModel SelectedDatabaseConnection { get; set; }
+    public DatabaseConnectionModel SelectedDatabaseConnection { get; set; }
 
-    string UiHint { get; set; }
+    public string UiHint { get; set; }
 
-    int CodeGenerationMode { get; set; }
+    public int CodeGenerationMode { get; set; }
 
-    bool FilterSchemas { get; set; }
+    public bool FilterSchemas { get; set; }
 }

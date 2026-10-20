@@ -8,15 +8,15 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IPickConfigViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand LoadedCommand { get; }
+    public ICommand LoadedCommand { get; }
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ObservableCollection<ConfigModel> Configurations { get; }
+    public ObservableCollection<ConfigModel> Configurations { get; }
 
-    ConfigModel SelectedConfiguration { get; set; }
+    public ConfigModel SelectedConfiguration { get; set; }
 }

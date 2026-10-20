@@ -9,23 +9,23 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IModelingOptionsViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ModelingOptionsModel Model { get; }
+    public ModelingOptionsModel Model { get; }
 
-    IReadOnlyList<string> GenerationModeList { get; }
+    public IReadOnlyList<string> GenerationModeList { get; }
 
-    string Title { get; }
+    public string Title { get; }
 
-    bool MayIncludeConnectionString { get; }
+    public bool MayIncludeConnectionString { get; }
 
-    ObservableCollection<TemplateTypeItem> TemplateTypeList { get; }
+    public ObservableCollection<TemplateTypeItem> TemplateTypeList { get; }
 
-    int SelectedTemplateType { get; set; }
+    public int SelectedTemplateType { get; set; }
 
-    void ApplyPresets(ModelingOptionsModel presets);
+    public void ApplyPresets(ModelingOptionsModel presets);
 }

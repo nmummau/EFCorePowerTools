@@ -4,17 +4,17 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IColumnInformationViewModel : IObjectTreeEditableViewModel, IObjectTreeSelectableViewModel, IViewModel
 {
-    ObservableCollection<IColumnChildrenViewModel> Children { get; }
+    public ObservableCollection<IColumnChildrenViewModel> Children { get; }
 
-    bool IsPrimaryKey { get; set; }
+    public bool IsPrimaryKey { get; set; }
 
-    bool IsForeignKey { get; set; }
+    public bool IsForeignKey { get; set; }
 
-    bool IsColumn { get; }
+    public bool IsColumn { get; }
 
-    bool IsTableSelected { get; set; }
+    public bool IsTableSelected { get; set; }
 
-    bool IsEnabled { get; }
+    public bool IsEnabled { get; }
 
-    void SetSelected(bool value);
+    public void SetSelected(bool value);
 }

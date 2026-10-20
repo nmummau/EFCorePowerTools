@@ -8,15 +8,15 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IPickSchemasViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ICommand AddCommand { get; }
+    public ICommand AddCommand { get; }
 
-    ICommand RemoveCommand { get; }
+    public ICommand RemoveCommand { get; }
 
-    ObservableCollection<SchemaInfo> Schemas { get; }
+    public ObservableCollection<SchemaInfo> Schemas { get; }
 }

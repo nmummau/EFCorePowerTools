@@ -8,15 +8,15 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IPickProjectViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand LoadedCommand { get; }
+    public ICommand LoadedCommand { get; }
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ObservableCollection<ProjectModel> Projects { get; }
+    public ObservableCollection<ProjectModel> Projects { get; }
 
-    ProjectModel SelectedProject { get; set; }
+    public ProjectModel SelectedProject { get; set; }
 }

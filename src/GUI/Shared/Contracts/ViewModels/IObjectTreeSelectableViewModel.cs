@@ -4,7 +4,7 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IObjectTreeSelectableViewModel
 {
-    bool? IsSelected { get; }
+    public bool? IsSelected { get; }
 
-    ICommand SetSelectedCommand { get; }
+    public ICommand SetSelectedCommand { get; }
 }

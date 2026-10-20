@@ -7,13 +7,13 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IAdvancedModelingOptionsViewModel : IViewModel
 {
-    event EventHandler<CloseRequestedEventArgs> CloseRequested;
+    public event EventHandler<CloseRequestedEventArgs> CloseRequested;
 
-    ICommand OkCommand { get; }
+    public ICommand OkCommand { get; }
 
-    ICommand CancelCommand { get; }
+    public ICommand CancelCommand { get; }
 
-    ModelingOptionsModel Model { get; }
+    public ModelingOptionsModel Model { get; }
 
-    void ApplyPresets(ModelingOptionsModel presets);
+    public void ApplyPresets(ModelingOptionsModel presets);
 }

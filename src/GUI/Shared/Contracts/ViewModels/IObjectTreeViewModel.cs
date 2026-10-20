@@ -7,23 +7,23 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IObjectTreeViewModel : IViewModel
 {
-    event EventHandler ObjectSelectionChanged;
+    public event EventHandler ObjectSelectionChanged;
 
-    ObservableCollection<IObjectTreeRootItemViewModel> Types { get; }
+    public ObservableCollection<IObjectTreeRootItemViewModel> Types { get; }
 
-    bool IsInEditMode { get; }
+    public bool IsInEditMode { get; }
 
-    void Search(string searchText, SearchMode searchMode);
+    public void Search(string searchText, SearchMode searchMode);
 
-    void SetSelectionState(bool value);
+    public void SetSelectionState(bool value);
 
-    bool? GetSelectionState();
+    public bool? GetSelectionState();
 
-    IEnumerable<SerializationTableModel> GetSelectedObjects();
+    public IEnumerable<SerializationTableModel> GetSelectedObjects();
 
-    IEnumerable<Schema> GetRenamedObjects();
+    public IEnumerable<Schema> GetRenamedObjects();
 
-    void AddObjects(IEnumerable<TableModel> objects, IEnumerable<Schema> customReplacers);
+    public void AddObjects(IEnumerable<TableModel> objects, IEnumerable<Schema> customReplacers);
 
-    void SelectObjects(IEnumerable<SerializationTableModel> objects);
+    public void SelectObjects(IEnumerable<SerializationTableModel> objects);
 }

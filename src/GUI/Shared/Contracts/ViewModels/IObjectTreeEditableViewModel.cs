@@ -4,17 +4,17 @@ namespace EFCorePowerTools.Contracts.ViewModels;
 
 public interface IObjectTreeEditableViewModel
 {
-    string Name { get; set; }
+    public string Name { get; set; }
 
-    string NewName { get; set; }
+    public string NewName { get; set; }
 
-    string DisplayName { get; }
+    public string DisplayName { get; }
 
-    bool IsEditing { get; set; }
+    public bool IsEditing { get; set; }
 
-    ICommand StartEditCommand { get; }
+    public ICommand StartEditCommand { get; }
 
-    ICommand ConfirmEditCommand { get; }
+    public ICommand ConfirmEditCommand { get; }
 
-    ICommand CancelEditCommand { get; }
+    public ICommand CancelEditCommand { get; }
 }
