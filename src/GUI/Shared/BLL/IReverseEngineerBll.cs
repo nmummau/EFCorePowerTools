@@ -14,9 +14,9 @@ namespace EFCorePowerTools.BLL;
 /// </summary>
 public interface IReverseEngineerBll
 {
-    Task ReverseEngineerCodeFirstAsync(string uiHint = null, WizardEventArgs wizardArgs = null);
+    public Task ReverseEngineerCodeFirstAsync(string uiHint = null, WizardEventArgs wizardArgs = null);
 
-    Task ReverseEngineerCodeFirstAsync(
+    public Task ReverseEngineerCodeFirstAsync(
         Project project,
         string optionsPath,
         bool onlyGenerate,
@@ -24,31 +24,31 @@ public interface IReverseEngineerBll
         string uiHint = null,
         WizardEventArgs wizardArgs = null);
 
-    Task<bool> LoadDataBaseObjectsAsync(
+    public Task<bool> LoadDataBaseObjectsAsync(
         ReverseEngineerOptions options,
         DatabaseConnectionModel dbInfo,
         Tuple<List<Schema>, string> namingOptionsAndPath,
         WizardEventArgs wizardArgs = null);
 
-    Task SaveOptionsAsync(
+    public Task SaveOptionsAsync(
         Project project,
         string optionsPath,
         ReverseEngineerOptions options,
         ReverseEngineerUserOptions userOptions,
         Tuple<List<Schema>, string> renamingOptions);
 
-    Task<bool> GetModelOptionsAsync(
+    public Task<bool> GetModelOptionsAsync(
         ReverseEngineerOptions options,
         string projectName,
         WizardEventArgs wizardArgs = null);
 
-    bool GetModelOptionsPostDialog(
+    public bool GetModelOptionsPostDialog(
         ReverseEngineerOptions options,
         string projectName,
         WizardEventArgs wizardArgs = null,
         ModelingOptionsModel modelingOptionsResult = null);
 
-    Task<string> GenerateFilesAsync(
+    public Task<string> GenerateFilesAsync(
         Project project,
         ReverseEngineerOptions options,
         string missingProviderPackage,

@@ -6,21 +6,21 @@ namespace EFCorePowerTools.Common.DAL;
 
 public interface IVisualStudioAccess
 {
-    DatabaseConnectionModel PromptForNewDatabaseConnection();
+    public DatabaseConnectionModel PromptForNewDatabaseConnection();
 
-    DatabaseConnectionModel PromptForNewDacpacDatabaseDefinition();
+    public DatabaseConnectionModel PromptForNewDacpacDatabaseDefinition();
 
-    Task RemoveDatabaseConnectionAsync(IVsDataConnection dataConnection);
+    public Task RemoveDatabaseConnectionAsync(IVsDataConnection dataConnection);
 
-    void ShowMessage(string message);
+    public void ShowMessage(string message);
 
-    Task StartStatusBarAnimationAsync();
+    public Task StartStatusBarAnimationAsync();
 
-    Task StopStatusBarAnimationAsync();
+    public Task StopStatusBarAnimationAsync();
 
-    Task SetStatusBarTextAsync(string text);
+    public Task SetStatusBarTextAsync(string text);
 
-    void ShowError(string error);
+    public void ShowError(string error);
 
-    void OpenFile(string fileName);
+    public void OpenFile(string fileName);
 }

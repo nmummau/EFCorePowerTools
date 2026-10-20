@@ -5,9 +5,9 @@ namespace EFCorePowerTools.DAL;
 
 public interface ICredentialStore
 {
-    bool DeleteCredential(string name);
+    public bool DeleteCredential(string name);
 
-    List<DatabaseConnectionModel> GetStoredDatabaseConnections();
+    public List<DatabaseConnectionModel> GetStoredDatabaseConnections();
 
-    bool SaveCredential(DatabaseConnectionModel connectionModel);
+    public bool SaveCredential(DatabaseConnectionModel connectionModel);
 }
