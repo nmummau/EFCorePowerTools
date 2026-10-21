@@ -91,17 +91,30 @@ dotnet format test/ScaffoldingTester/ScaffoldingTester.slnx --verify-no-changes
 
 ### Maintaining the ATC rules
 
-The [ATC rule updates workflow](.github/workflows/atc-rules.yml) runs weekly on Mondays at 08:17 UTC and can also be run manually. It compares ATC's root DotNet8 `.editorconfig` on `main` with a recorded upstream revision and fails when the file changes. This records which upstream changes have been inspected; the repository keeps its own formatting preferences and generated-code exceptions. The workflow checks for future upstream changes, rather than requiring our `.editorconfig` to match ATC exactly.
+The [ATC rule updates workflow](.github/workflows/atc-rules.yml) runs weekly on Mondays at 08:17 UTC and can also be run manually. It checks out this repository and runs ATC's documented ["coding rules are current" check](https://github.com/atc-net/atc-coding-rules-updater#gating-ci-on-coding-rules-are-current):
+
+```sh
+atc-coding-rules-updater run -p . -t DotNet8 --dry-run --fail-on-changes
+```
+
+The job fails if the updater would create or update any files, including nested `.editorconfig` and `Directory.Build.props` files. `--dry-run` leaves repository files unchanged. Informational drift that the updater reports but would not apply does not trigger `--fail-on-changes`.
+
+The workflow installs updater version `2.1.0` using the .NET 10 SDK. To reproduce the check locally, install the same tool version and run the command above from the repository root:
+
+```sh
+dotnet tool install --global atc-coding-rules-updater --version 2.1.0
+```
+
+`-t DotNet8` selects the rule distribution used by our `.editorconfig`; the updater itself runs on .NET 10. The updater fetches ATC's current distribution, so a new upstream rule can make the weekly check fail even when this repository has not changed.
 
 When it fails:
 
-1. Review the diff in the job log and the [upstream file history](https://github.com/atc-net/atc-coding-rules/commits/main/distribution/dotnet8/.editorconfig).
-2. Apply relevant changes to the root `.editorconfig`, preserving this repository's custom settings, and run the formatting checks above.
-3. Update `ATC_RULES_REVIEWED_REF` in the workflow to the full upstream commit SHA that was reviewed. Explain any intentionally omitted rule changes in the pull request.
+1. Review the proposed changes or errors in the job log and reproduce the dry run locally.
+2. Keep intentional overrides in `.editorconfig`'s `Custom -` sections and configure the updater's mappings where needed for this repository's layout. Preview those changes again before applying updates.
+3. Run `atc-coding-rules-updater run -p . -t DotNet8` locally to apply the updates, review all resulting configuration and package changes, and run the formatting and relevant build checks.
+4. Commit the reviewed changes and rerun the dry-run check until it reports no files to create or update.
 
-The scheduled check downloads comparison files into the runner's temporary directory. It leaves repository files unchanged and runs separately from PR formatting verification. It monitors only the root DotNet8 rule template; analyzer package updates are handled by Dependabot.
-
-ATC's updater also supports `run -p . -t DotNet8 --dry-run --fail-on-changes`. That command checks the full updater configuration, including additional `.editorconfig` and `Directory.Build.props` files it would create. This repository uses the narrower upstream-file check so its existing layout does not cause a recurring failure.
+The weekly configuration check runs separately from PR formatting verification. The existing `dotnet format --verify-no-changes` checks continue to verify source code against the checked-in rules.
 
 ## Support and sponsors
 
